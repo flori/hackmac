@@ -1,0 +1,125 @@
+#!/usr/bin/env ruby
+
+require 'hackmac'
+include Hackmac
+require 'term/ansicolor'
+class String
+  include Term::ANSIColor
+end
+
+def x(cmd, verbose: true)
+  prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
+  output = `#{cmd}`
+  if $?.success?
+    print "#{prompt} #{cmd}".green
+    puts verbose ? "" : " >/dev/null".yellow
+  else
+    print "#{prompt} #{cmd}".red
+    puts verbose ? "" : " >/dev/null".yellow
+    STDERR.puts "command #{cmd.inspect} failed with exit status #{$?.exitstatus}".on_red.white
+  end
+  if verbose
+    print output.italic
+  end
+  output
+end
+
+def clone(from:, to:)
+  print "Cloning from #{from} to #{to} now? (y/n) ".bold.yellow
+  if gets !~ /\Ay/i
+    return
+  end
+  x %{sudo mkdir -v "/Volumes/#{from}"}
+  x %{sudo mkdir -v "/Volumes/#{to}"}
+  begin
+    x %{sudo diskutil mount -mountPoint "/Volumes/#{from}" "#{from}"}
+    x %{sudo diskutil mount -mountPoint "/Volumes/#{to}" "#{to}"}
+    x %{rsync -nav --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
+    print "This will be copied/deleted. Really do it? (y/n) ".bold.yellow
+    if gets !~ /\Ay/i
+      puts " *** Interrupted.".bold.yellow
+      exit 1
+    end
+    x %{rsync -av --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
+  ensure
+    x %{sudo diskutil unmount "#{from}"}
+    x %{sudo diskutil unmount "#{to}"}
+  end
+end
+
+def dev
+  value = x(%{bdmesg}, verbose: false).lines.
+    find { |l| l =~ /SelfDevicePath=(.*)\r/ and break $1 }
+  uuid  = value.split('\\').last[/(?:<?GPT,)([\h-]+)/, 1] or exit 1
+  x(%{partutil --search-uuid #{uuid}}).chomp
+end
+
+case command = ARGV.shift
+when 'mount'
+  mdev = ARGV.shift || dev
+  x %{sudo diskutil mount "#{mdev}"}
+when /\Aun?mount\z/
+  mdev = ARGV.shift || dev
+  x %{sudo diskutil unmount "#{mdev}"}
+when 'clone'
+  from = ARGV.shift or fail "need from argument"
+  from == 'boot' and from = dev
+  to   = ARGV.shift or fail "need to argument"
+  to == 'boot' and to = dev
+  from != to or fail "cloning only allowed from one partition to another"
+  clone from: from, to: to
+when 'kext'
+  begin
+    mdev = ARGV.shift || dev
+    x %{sudo diskutil mount "#{mdev}"}
+    on_efi = Dir['/Volumes/EFI/EFI/CLOVER/kexts/Other/*.kext'].map { |path|
+      Kext.new(path: path)
+    }.sort_by(&:name)
+    on_le = Dir['/Library/Extensions/*.kext'].map { |path|
+      Kext.new(path: path)
+    }.sort_by(&:name)
+    puts 'EFI'.yellow.bold
+    on_efi.each do |kext|
+      puts kext.compare_to(on_le)
+    end
+    puts 'L/E'.yellow.bold
+    on_le.each do |kext|
+      puts kext.compare_to(on_efi)
+    end
+  ensure
+    x %{sudo diskutil umount "#{mdev}"}
+  end
+when nil
+  disks = Disks.new
+  efis = []
+  disks.as_hash['AllDisksAndPartitions'].each_with_object([]) { |d, ps|
+    uuids = Array(d['Partitions']&.map { |p| p['DiskUUID'] }&.compact)
+    efis.concat uuids.
+      map { |uuid| DiskInfo.new(disk: uuid) }.
+      select { |di| di.as_hash['FilesystemType'] == 'msdos' }
+  }
+  efis.map!(&:as_hash)
+  efis.each do |e|
+    e['Booted'] = e['DeviceIdentifier'] == dev
+    e['Volumes'] =
+      ContainerDisk.new(disk: e['ParentWholeDisk'], limiter: 'internal').
+      as_hash['VolumesFromDisks']
+  end
+  efis.map!(&:sort).map!(&:to_h)
+  puts "Bootdisk information".bold.yellow, JSON.pretty_generate(
+    efis.map { |e| e.subhash(
+        'Bootable',
+        'Booted',
+        'DeviceIdentifier',
+        'DiskUUID',
+        'IORegistryEntryName',
+        'MountPoint',
+        'ParentWholeDisk',
+        'VolumeName',
+        'Volumes',
+      )
+    }
+  ).bold
+else
+  fail "don't know how to #{command}"
+end
