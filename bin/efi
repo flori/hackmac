@@ -54,7 +54,48 @@ def dev
   x(%{partutil --search-uuid #{uuid}}).chomp
 end
 
+def usage
+  default_dev = dev
+
+  puts <<~end
+
+    Usage #{File.basename($0)} [command] [arguments]
+
+    Commands are
+
+      help        this help
+
+      mount       EFI partition
+
+        argument DEVICE (defaults to #{default_dev})
+
+      unmount     EFI partition
+
+        argument DEVICE (defaults to #{default_dev})
+
+      clone       clone EFI partitions
+
+        argument FROM_DEVICE (defaults to #{default_dev})
+
+        argument TO_DEVICE (defaults to #{default_dev})
+
+        The devices have to be different.
+
+      kext        list kexts in L/E and compare versions with clover kexts
+
+        argument DEVICE (defaults to #{default_dev})
+
+        The EFI partion on DEVICE is used to find the clover kexts in
+        subdirectory /Other.
+
+      boot        shows boot disk information (which EFI partition was used)
+
+  end
+end
+
 case command = ARGV.shift
+when 'help', nil
+  usage
 when 'mount'
   mdev = ARGV.shift || dev
   x %{sudo diskutil mount "#{mdev}"}
@@ -89,7 +130,7 @@ when 'kext'
   ensure
     x %{sudo diskutil umount "#{mdev}"}
   end
-when nil
+when 'boot'
   disks = Disks.new
   efis = []
   disks.as_hash['AllDisksAndPartitions'].each_with_object([]) { |d, ps|
