@@ -81,7 +81,7 @@ def usage
 
         The devices have to be different.
 
-      kext        list kexts in L/E and compare versions with clover kexts
+      kexts       list kexts in L/E and compare versions with clover kexts
 
         argument DEVICE (defaults to #{default_dev})
 
@@ -109,9 +109,9 @@ when 'clone'
   to == 'boot' and to = dev
   from != to or fail "cloning only allowed from one partition to another"
   clone from: from, to: to
-when 'kext'
+when 'kexts'
   begin
-    mdev = ARGV.shift || dev
+    mdev = ARGV.shift || 'EFI'
     x %{sudo diskutil mount "#{mdev}"}
     on_efi = Dir["/Volumes/#{mdev}/EFI/CLOVER/kexts/Other/*.kext"].map { |path|
       Kext.new(path: path)
@@ -130,6 +130,9 @@ when 'kext'
   ensure
     x %{sudo diskutil umount "#{mdev}"}
   end
+when 'kext'
+  path = ARGV.shift or fail 'need app dir'
+  puts Kext.new(path: path)
 when 'boot'
   disks = Disks.new
   efis = []
