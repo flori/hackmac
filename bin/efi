@@ -113,7 +113,7 @@ when 'kext'
   begin
     mdev = ARGV.shift || dev
     x %{sudo diskutil mount "#{mdev}"}
-    on_efi = Dir['/Volumes/EFI/EFI/CLOVER/kexts/Other/*.kext'].map { |path|
+    on_efi = Dir["/Volumes/#{mdev}/EFI/CLOVER/kexts/Other/*.kext"].map { |path|
       Kext.new(path: path)
     }.sort_by(&:name)
     on_le = Dir['/Library/Extensions/*.kext'].map { |path|
