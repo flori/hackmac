@@ -7,7 +7,7 @@ module Hackmac
 
     def initialize(path:)
       @path = Pathname.new(path) + 'Contents/Info.plist'
-      @plist = File.open(@path) { |f| ::Plist.parse_xml(f) }
+      @plist = File.open(@path, encoding: 'UTF-8') { |f| ::Plist.parse_xml(f) }
     end
 
     def identifier

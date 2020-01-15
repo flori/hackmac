@@ -81,6 +81,10 @@ def usage
 
         The devices have to be different.
 
+      kext        list version info of kext
+
+        argument PATH to the kext
+
       kexts       list kexts in L/E and compare versions with clover kexts
 
         argument DEVICE (defaults to #{default_dev})
@@ -97,11 +101,16 @@ case command = ARGV.shift
 when 'help', nil
   usage
 when 'mount'
+  #if File.exist?('/Volumes/EFI')
+  #  raise "/Volumes/EFI already exists => Sort this out first."
+  #end
   mdev = ARGV.shift || dev
   x %{sudo diskutil mount "#{mdev}"}
+  # TODO symlink to /Volumes/mdev, mdev should be foo['MountPoint'] from efi boot
 when /\Aun?mount\z/
   mdev = ARGV.shift || dev
   x %{sudo diskutil unmount "#{mdev}"}
+  # TODO remove /Volumes/mdev if it is a symlink
 when 'clone'
   from = ARGV.shift or fail "need from argument"
   from == 'boot' and from = dev
@@ -119,7 +128,7 @@ when 'kexts'
     on_le = Dir['/Library/Extensions/*.kext'].map { |path|
       Kext.new(path: path)
     }.sort_by(&:name)
-    puts 'EFI'.yellow.bold
+    puts 'EFI'.yellow.bold + " (#{mdev})".bold
     on_efi.each do |kext|
       puts kext.compare_to(on_le)
     end
@@ -131,7 +140,7 @@ when 'kexts'
     x %{sudo diskutil umount "#{mdev}"}
   end
 when 'kext'
-  path = ARGV.shift or fail 'need app dir'
+  path = ARGV.shift or fail 'need kext dir'
   puts Kext.new(path: path)
 when 'boot'
   disks = Disks.new
