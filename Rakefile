@@ -18,6 +18,8 @@ GemHadar do
 
   dependency  'tins',           '~>1.14'
   dependency  'term-ansicolor', '~>1.3'
+  dependency  'complex_config'
   dependency  'amatch'
   dependency  'plist'
+  dependency  'tabulo'
 end

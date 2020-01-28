@@ -6,6 +6,7 @@ require 'term/ansicolor'
 class String
   include Term::ANSIColor
 end
+require 'tabulo'
 
 def x(cmd, verbose: true)
   prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
@@ -31,27 +32,25 @@ def clone(from:, to:)
   end
   x %{sudo mkdir -v "/Volumes/#{from}"}
   x %{sudo mkdir -v "/Volumes/#{to}"}
-  begin
-    x %{sudo diskutil mount -mountPoint "/Volumes/#{from}" "#{from}"}
-    x %{sudo diskutil mount -mountPoint "/Volumes/#{to}" "#{to}"}
-    x %{rsync -nav --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
-    print "This will be copied/deleted. Really do it? (y/n) ".bold.yellow
-    if gets !~ /\Ay/i
-      puts " *** Interrupted.".bold.yellow
-      exit 1
-    end
-    x %{rsync -av --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
-  ensure
-    x %{sudo diskutil unmount "#{from}"}
-    x %{sudo diskutil unmount "#{to}"}
+  x %{sudo diskutil mount -mountPoint "/Volumes/#{from}" "#{from}"}
+  x %{sudo diskutil mount -mountPoint "/Volumes/#{to}" "#{to}"}
+  x %{rsync -nav --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
+  print "This will be copied/deleted. Really do it? (y/n) ".bold.yellow
+  if gets !~ /\Ay/i
+    puts " *** Interrupted.".bold.yellow
+    exit 1
   end
+  x %{rsync -av --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
 end
 
-def dev
-  value = x(%{bdmesg}, verbose: false).lines.
-    find { |l| l =~ /SelfDevicePath=(.*)\r/ and break $1 }
-  uuid  = value.split('\\').last[/(?:<?GPT,)([\h-]+)/, 1] or exit 1
-  x(%{partutil --search-uuid #{uuid}}).chomp
+def boot_dev
+  unless @boot_dev
+    value = x(%{bdmesg}, verbose: false).lines.
+      find { |l| l =~ /SelfDevicePath=(.*)\r/ and break $1 }
+    uuid  = value.split('\\').last[/(?:<?GPT,)([\h-]+)/, 1] or exit 1
+    @boot_dev = x(%{partutil --search-uuid #{uuid}}).chomp
+  end
+  @boot_dev
 end
 
 def usage
@@ -85,17 +84,36 @@ def usage
 
         argument PATH to the kext
 
-      kexts       list kexts in L/E and compare versions with clover kexts
+      kexts       list kexts versions by clover
 
         argument DEVICE (defaults to #{default_dev})
 
         The EFI partion on DEVICE is used to find the clover kexts in
         subdirectory /Other.
 
-      boot        shows boot disk information (which EFI partition was used)
+      list        shows boot disk information (which EFI partition was used)
 
   end
 end
+
+$config = Hackmac::Config.load
+
+def device_name(mdev)
+  case mdev
+  when 'boot'
+    boot_dev
+  when nil
+    $config.devices.main.name
+  else
+    if n = $config.devices[mdev]&.name
+      n
+    else
+      mdev
+    end
+  end
+end
+
+bold_head = -> h { h.sub(/\A[a-z]/) { $&.upcase }.bold }
 
 case command = ARGV.shift
 when 'help', nil
@@ -104,75 +122,60 @@ when 'mount'
   #if File.exist?('/Volumes/EFI')
   #  raise "/Volumes/EFI already exists => Sort this out first."
   #end
-  mdev = ARGV.shift || dev
+  mdev = device_name(ARGV.shift)
   x %{sudo diskutil mount "#{mdev}"}
   # TODO symlink to /Volumes/mdev, mdev should be foo['MountPoint'] from efi boot
 when /\Aun?mount\z/
-  mdev = ARGV.shift || dev
+  mdev = device_name(ARGV.shift)
   x %{sudo diskutil unmount "#{mdev}"}
   # TODO remove /Volumes/mdev if it is a symlink
 when 'clone'
   from = ARGV.shift or fail "need from argument"
-  from == 'boot' and from = dev
-  to   = ARGV.shift or fail "need to argument"
-  to == 'boot' and to = dev
+  from = device_name(from)
+  to = ARGV.shift or fail "need to argument"
+  to = device_name(to)
   from != to or fail "cloning only allowed from one partition to another"
   clone from: from, to: to
 when 'kexts'
-  begin
-    mdev = ARGV.shift || 'EFI'
-    x %{sudo diskutil mount "#{mdev}"}
-    on_efi = Dir["/Volumes/#{mdev}/EFI/CLOVER/kexts/Other/*.kext"].map { |path|
-      Kext.new(path: path)
-    }.sort_by(&:name)
-    on_le = Dir['/Library/Extensions/*.kext'].map { |path|
-      Kext.new(path: path)
-    }.sort_by(&:name)
-    puts 'EFI'.yellow.bold + " (#{mdev})".bold
-    on_efi.each do |kext|
-      puts kext.compare_to(on_le)
-    end
-    puts 'L/E'.yellow.bold
-    on_le.each do |kext|
-      puts kext.compare_to(on_efi)
-    end
-  ensure
-    x %{sudo diskutil umount "#{mdev}"}
-  end
+  mdev = device_name(ARGV.shift)
+  x %{sudo diskutil mount "#{mdev}"}
+  on_efi = Dir["/Volumes/#{mdev}/#{$config.kext.efi_path}/*.kext"].map { |path|
+    Kext.new(path: path, config: $config)
+  }.sort_by(&:name)
+  puts 'EFI'.yellow.bold + " (#{mdev})".bold
+  puts Tabulo::Table.new(on_efi, align_header: :left, border: :modern) { |t|
+    t.add_column(:name, header_styler: bold_head)
+    t.add_column(:itself, header: 'Version/Remote',
+                 styler: -> v, s { v.version < v.remote_version ? s.red : s.green rescue s.yellow },
+                 formatter: -> e { "%s %s %s" % [ e.version, ({ 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version] rescue nil), e.remote_version ] },
+                 header_styler: bold_head)
+  }.pack
 when 'kext'
   path = ARGV.shift or fail 'need kext dir'
   puts Kext.new(path: path)
-when 'boot'
+when 'list'
   disks = Disks.new
   efis = []
   disks.as_hash['AllDisksAndPartitions'].each_with_object([]) { |d, ps|
     uuids = Array(d['Partitions']&.map { |p| p['DiskUUID'] }&.compact)
     efis.concat uuids.
       map { |uuid| DiskInfo.new(disk: uuid) }.
-      select { |di| di.as_hash['FilesystemType'] == 'msdos' }
+      select { |di| di.FilesystemType == 'msdos' }
   }
-  efis.map!(&:as_hash)
   efis.each do |e|
-    e['Booted'] = e['DeviceIdentifier'] == dev
-    e['Volumes'] =
-      ContainerDisk.new(disk: e['ParentWholeDisk'], limiter: 'internal').
-      as_hash['VolumesFromDisks']
+    e.Booted = e.DeviceIdentifier == boot_dev
+    e.Volumes =
+      ContainerDisk.new(disk: e.ParentWholeDisk, limiter: 'internal').VolumesFromDisks
   end
-  efis.map!(&:sort).map!(&:to_h)
-  puts "Bootdisk information".bold.yellow, JSON.pretty_generate(
-    efis.map { |e| e.subhash(
-        'Bootable',
-        'Booted',
-        'DeviceIdentifier',
-        'DiskUUID',
-        'IORegistryEntryName',
-        'MountPoint',
-        'ParentWholeDisk',
-        'VolumeName',
-        'Volumes',
-      )
-    }
-  ).bold
+  puts Tabulo::Table.new(efis, align_header: :left, border: :modern) { |t|
+    t.add_column(:Booted, styler: -> v, _ { v == ?☑ ? v.green : v.red }, header_styler: bold_head) { |e| e.Booted ? ?☑ : ?☐ }
+    t.add_column(:VolumeName, header_styler: bold_head)
+    t.add_column(:DeviceIdentifier, header_styler: bold_head)
+    t.add_column(:ParentWholeDisk, header_styler: bold_head)
+    t.add_column(:DiskUUID, header_styler: bold_head)
+    t.add_column(:Volumes, header_styler: bold_head) { |e| e.Volumes * ?, }
+    t.add_column(:MountPoint, styler: -> v, _ { v.empty? ? v : v.green }, header_styler: bold_head)
+  }.pack
 else
   fail "don't know how to #{command}"
 end
