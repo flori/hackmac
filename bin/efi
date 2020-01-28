@@ -54,7 +54,7 @@ def boot_dev
 end
 
 def usage
-  default_dev = dev
+  default_dev = boot_dev
 
   puts <<~end
 
@@ -156,7 +156,7 @@ when 'kext'
 when 'list'
   disks = Disks.new
   efis = []
-  disks.as_hash['AllDisksAndPartitions'].each_with_object([]) { |d, ps|
+  disks.AllDisksAndPartitions.each_with_object([]) { |d, ps|
     uuids = Array(d['Partitions']&.map { |p| p['DiskUUID'] }&.compact)
     efis.concat uuids.
       map { |uuid| DiskInfo.new(disk: uuid) }.

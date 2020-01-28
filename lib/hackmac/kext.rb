@@ -14,16 +14,16 @@ module Hackmac
     end
 
     def identifier
-      as_hash['CFBundleIdentifier']
+      CFBundleIdentifier()
     end
 
     def name
-      as_hash['CFBundleName'] || File.basename(identifier)
+      CFBundleName() || File.basename(identifier)
     end
 
     def version
       unless @version
-        if version = as_hash['CFBundleShortVersionString']
+        if version = CFBundleShortVersionString()
           begin
             @version = Version.new(version)
           rescue ArgumentError
