@@ -9,6 +9,8 @@ module Hackmac
     include Tins::StringVersion
 
     def initialize(github, auth: nil)
+      @github = github
+      @auth   = auth
       account, repo = github.split(?/)
       @name = repo
       releases = URI.open(
@@ -16,22 +18,37 @@ module Hackmac
         http_basic_authentication: auth) { |o|
         JSON.parse(o.read, object_class: JSON::GenericObject)
       }
-      if version = releases.map { |r|
+      if max_version = releases.map { |r|
           next unless r.tag_name.include?(?.)
-          version = r.tag_name.delete '^.0-9'
+          tag = r.tag_name.delete '^.0-9'
           begin
-            Version.new(version)
+            [ Version.new(tag), r ]
           rescue ArgumentError
           end
-        }.compact.max
+        }.compact.max_by(&:first)
       then
-        @version = version
+        @version, @release = max_version
       end
     end
 
     attr_reader :name
 
     attr_reader :version
+
+    attr_reader :github
+
+    attr_reader :auth
+
+    def download_asset
+      @release or return
+      asset = @release.assets.find { |a| a.name =~ /RELEASE.*zip/ } or return
+      data = URI.open(
+        (GITHUB_API_URL % github) + ("/assets/%s" % asset.id),
+        'Accept' => 'application/octet-stream',
+        http_basic_authentication: auth
+      ) { |o| o.read }
+      return asset.name, data
+    end
 
     def inspect
       "#<#{self.class}: #{to_s}>"

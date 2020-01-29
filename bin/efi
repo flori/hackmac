@@ -7,6 +7,9 @@ class String
   include Term::ANSIColor
 end
 require 'tabulo'
+require 'fileutils'
+include FileUtils
+require 'tmpdir'
 
 def x(cmd, verbose: true)
   prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
@@ -25,18 +28,19 @@ def x(cmd, verbose: true)
   output
 end
 
+def ask(prompt)
+  print prompt.bold.yellow
+  gets =~ /\Ay/i
+end
+
 def clone(from:, to:)
-  print "Cloning from #{from} to #{to} now? (y/n) ".bold.yellow
-  if gets !~ /\Ay/i
-    return
-  end
+  ask("Cloning from #{from} to #{to} now? (y/n) ") or return
   x %{sudo mkdir -v "/Volumes/#{from}"}
   x %{sudo mkdir -v "/Volumes/#{to}"}
   x %{sudo diskutil mount -mountPoint "/Volumes/#{from}" "#{from}"}
   x %{sudo diskutil mount -mountPoint "/Volumes/#{to}" "#{to}"}
   x %{rsync -nav --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
-  print "This will be copied/deleted. Really do it? (y/n) ".bold.yellow
-  if gets !~ /\Ay/i
+  unless ask("This will be copied/deleted. Really do it? (y/n) ")
     puts " *** Interrupted.".bold.yellow
     exit 1
   end
@@ -81,6 +85,10 @@ def usage
         The devices have to be different.
 
       kext        list version info of kext
+
+        argument PATH to the kext
+
+      kext_upgrade
 
         argument PATH to the kext
 
@@ -153,6 +161,32 @@ when 'kexts'
 when 'kext'
   path = ARGV.shift or fail 'need kext dir'
   puts Kext.new(path: path)
+when 'kext_upgrade'
+  path = ARGV.shift or fail 'need kext dir'
+  kext = Kext.new(path: path, config: $config)
+  case
+  when kext.remote_version.nil?
+    puts "No source defined for #{kext}"
+  when kext.remote_version > kext.version
+    Dir.mktmpdir do |dir|
+      cd dir do
+        name, data = kext.remote_kext.download_asset
+        File.secure_write(name, data)
+        system "unzip #{name.inspect}"
+        kext_name = "#{kext.name}.kext"
+        if File.directory?(kext_name)
+          if ask("Really upgrade #{path.inspect} to version #{kext.remote_version}? (y/n) ")
+            rm_rf path
+            cp_r kext_name, path
+          end
+        else
+          fail "#{kext_name} could not be downloaded"
+        end
+      end
+    end
+  else
+    puts "#{kext} is already the latest version"
+  end
 when 'list'
   disks = Disks.new
   efis = []
