@@ -206,7 +206,6 @@ when 'list'
     t.add_column(:VolumeName, header_styler: bold_head)
     t.add_column(:DeviceIdentifier, header_styler: bold_head)
     t.add_column(:ParentWholeDisk, header_styler: bold_head)
-    t.add_column(:DiskUUID, header_styler: bold_head)
     t.add_column(:Volumes, header_styler: bold_head) { |e| e.Volumes * ?, }
     t.add_column(:MountPoint, styler: -> v, _ { v.empty? ? v : v.green }, header_styler: bold_head)
   }.pack
