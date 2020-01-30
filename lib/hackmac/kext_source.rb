@@ -41,7 +41,7 @@ module Hackmac
 
     def download_asset
       @release or return
-      asset = @release.assets.find { |a| a.name =~ /RELEASE.*zip/ } or return
+      asset = @release.assets.find { |a| a.name =~ /RELEASE.*zip/i } or return
       data = URI.open(
         (GITHUB_API_URL % github) + ("/assets/%s" % asset.id),
         'Accept' => 'application/octet-stream',
