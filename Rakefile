@@ -8,7 +8,7 @@ GemHadar do
   email       'flori@ping.de'
   homepage    "http://github.com/flori/#{name}"
   summary     'Some useful tools for working with a Hackintosh'
-  description 'This ruby gem provides Some useful tools for working with a Hackintosh.'
+  description 'This ruby gem provides some useful tools for working with a Hackintosh.'
   bindir      'bin'
   executables Dir['bin/*'].map(&File.method(:basename))
   test_dir    'tests'

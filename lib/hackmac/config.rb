@@ -9,6 +9,10 @@ module Hackmac
 
     DEFAULT = <<~end
       ---
+      efi:
+        source: 'https://github.com/flori/EFI-some.git'
+      usb:
+        os: '/Applications/Install macOS Mojave.app'
       devices:
         boot:
           name: EFI
