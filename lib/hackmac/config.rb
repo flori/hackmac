@@ -14,7 +14,7 @@ module Hackmac
       usb:
         os: '/Applications/Install macOS Mojave.app'
       devices:
-        boot:
+        main:
           name: EFI
         #backup:
         #  name: BACKUP_EFI

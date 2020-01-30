@@ -142,16 +142,20 @@ when 'kext_upgrade'
     Dir.mktmpdir do |dir|
       cd dir do
         name, data = kext.remote_kext.download_asset
-        File.secure_write(name, data)
-        system "unzip #{name.inspect}"
-        kext_name = "#{kext.name}.kext"
-        if File.directory?(kext_name)
-          if ask("Really upgrade #{path.inspect} to version #{kext.remote_version}? (y/n) ")
-            rm_rf path
-            cp_r kext_name, path
+        if name
+          File.secure_write(name, data)
+          system "unzip #{name.inspect}"
+          kext_name = "#{kext.name}.kext"
+          if File.directory?(kext_name)
+            if ask("Really upgrade #{path.inspect} to version #{kext.remote_version}? (y/n) ")
+              rm_rf path
+              cp_r kext_name, path
+            end
+          else
+            fail "#{kext_name} Could not be installed"
           end
         else
-          fail "#{kext_name} could not be downloaded"
+          fail "#{kext.remote_kext.name} could not be downloaded"
         end
       end
     end
