@@ -8,10 +8,13 @@ module Hackmac
     include Tins::StringVersion
 
     def initialize(path:, config: nil)
-      @path   = Pathname.new(path) + 'Contents/Info.plist'
-      @plist  = File.open(@path, encoding: 'UTF-8') { |f| ::Plist.parse_xml(f) }
+      @path   = path
+      info    = Pathname.new(@path) + 'Contents/Info.plist'
+      @plist  = File.open(info, encoding: 'UTF-8') { |f| ::Plist.parse_xml(f) }
       @config = config
     end
+
+    attr_reader :path
 
     def identifier
       CFBundleIdentifier()

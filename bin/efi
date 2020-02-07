@@ -128,6 +128,7 @@ when 'kexts'
                  styler: -> v, s { v.version < v.remote_version ? s.red : s.green rescue s.yellow },
                  formatter: -> e { "%s %s %s" % [ e.version, ({ 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version] rescue nil), e.remote_version ] },
                  header_styler: bold_head)
+    t.add_column(:path, header_styler: bold_head)
   }.pack
 when 'kext'
   path = ARGV.shift or fail 'need kext dir'
