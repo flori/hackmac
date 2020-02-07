@@ -22,4 +22,5 @@ GemHadar do
   dependency  'amatch'
   dependency  'plist'
   dependency  'tabulo'
+  development_dependency 'byebug'
 end

@@ -35,6 +35,7 @@ module Hackmac
     end
 
     def remote_kext
+      return @remote_kext if @remote_kext
       if @config
         if github = @config.kext.sources[name]&.github
           auth = [ @config.github.user, @config.github.access_token ].compact
