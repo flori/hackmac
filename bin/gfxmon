@@ -10,6 +10,8 @@ end
 require 'hackmac'
 include Hackmac
 require 'amatch'
+require 'search_ui'
+include SearchUI
 
 $opts = go 'c:g:n:jlh', defaults: { ?s => true, ?n => 10 }
 
@@ -62,7 +64,7 @@ def choose_metric(ps)
   case metric = $opts[?g]
   when nil
     ps_names = ps.keys
-    metric = SearchUI.new(
+    metric = Search.new(
       match: -> answer {
         matcher = Amatch::PairDistance.new(answer.downcase)
         matches = ps_names.map { |n| [ n, -matcher.similar(n.downcase) ] }.
