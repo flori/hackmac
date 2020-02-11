@@ -65,6 +65,7 @@ class Hackmac::SearchUI
       else
         @selector += 1
       end
+      @selector = [ @selector, 0 ].max
       nil
     when ?\r
       true
