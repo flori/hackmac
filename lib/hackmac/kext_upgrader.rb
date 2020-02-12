@@ -42,7 +42,7 @@ module Hackmac
                 when "#{kext.name}.kext"
                   kext_pathes.unshift path
                 when
-                  *@config.kext.sources[kext.name]&.plugins&.map { |p| p + '.kext' }
+                  *@config.kext.sources[kext.name]&.plugins?&.map { |p| p + '.kext' }
                 then
                   kext_pathes << path
                 end
