@@ -35,7 +35,7 @@ module Hackmac
             system "unzip #{name.inspect}" or fail "Could not unzip #{name.inspect}"
             kext_pathes = []
             Find.find(dir) do |path|
-              if FileTest.directory?(path)
+              if File.directory?(path)
                 case File.basename(path)
                 when /\A\./
                   Find.prune
