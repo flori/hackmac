@@ -34,9 +34,11 @@ module Hackmac
             github: 'Sniki/OS-X-USB-Inject-All'
           VirtualSMC:
             github: 'acidanthera/VirtualSMC'
+            plugins:
+              - SMCProcessor
+              - SMCSuperIO
           WhateverGreen:
             github: 'acidanthera/WhateverGreen'
-
     end
 
     def self.load

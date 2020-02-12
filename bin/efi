@@ -134,48 +134,8 @@ when 'kext'
   path = ARGV.shift or fail 'need kext dir'
   puts Kext.new(path: path)
 when 'kext_upgrade'
-  Dir.mktmpdir do |dir|
-    cd dir do
-      path = ARGV.shift or fail 'need kext dir'
-      kext = Kext.new(path: path, config: $config)
-      case
-      when kext.remote_version.nil?
-        puts "No source defined for #{kext}"
-      when kext.remote_version > kext.version
-        name, data = kext.remote_kext.download_asset
-        if name
-          File.secure_write(name, data)
-          system "unzip #{name.inspect}" or fail "Could not unzip #{name.inspect}"
-          kext_path = nil
-          Find.find(dir) do |path|
-            if FileTest.directory?(path)
-              case File.basename(path)
-              when /\A\./
-                Find.prune
-              when "#{kext.name}.kext"
-                kext_path = path
-                break
-              else
-                next
-              end
-            end
-          end
-          if kext_path
-            if ask("Really upgrade #{path.inspect} to version #{kext.remote_version}? (y/n) ")
-              rm_rf path
-              cp_r kext_path, path
-            end
-          else
-            fail "#{kext_path} Could not be installed"
-          end
-        else
-          fail "#{kext.remote_kext.name} could not be downloaded"
-        end
-      else
-        puts "#{kext} is already the latest version"
-      end
-    end
-  end
+  path = ARGV.shift or fail 'need kext dir'
+  Hackmac::KextUpgrader.new(path: path, config: $config).perform
 when 'list'
   disks = Disks.new
   efis = []
