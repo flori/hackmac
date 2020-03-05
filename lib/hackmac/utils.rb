@@ -5,6 +5,7 @@ end
 require 'tabulo'
 require 'fileutils'
 require 'tmpdir'
+require 'shellwords'
 
 module Hackmac
   module Utils

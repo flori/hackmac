@@ -92,6 +92,20 @@ def device_name(mdev)
   end
 end
 
+def git_args(default:)
+  mdev =
+    if ARGV.first == '--'
+      ARGV.shift
+      device_name(nil)
+    else
+      device_name(ARGV.shift)
+    end
+  if ARGV.empty?
+    ARGV.unshift(*default)
+  end
+  mdev
+end
+
 bold_head = -> h { h.sub(/\A[a-z]/) { $&.upcase }.bold }
 
 case command = ARGV.shift
@@ -108,6 +122,19 @@ when /\Aun?mount\z/
   mdev = device_name(ARGV.shift)
   x %{sudo diskutil unmount "#{mdev}"}
   # TODO remove /Volumes/mdev if it is a symlink
+when /\Adiff\z/
+  mdev = git_args(default: %w[ --color --stat ])
+  x %{sudo diskutil mount "#{mdev}"}
+  cd "/Volumes/#{mdev}" do
+    x %{git diff #{Shellwords.join(ARGV)}}
+  end
+when /\Acommit\z/
+  mdev = git_args(default: %w[ -v ])
+  x %{sudo diskutil mount "#{mdev}"}
+  cd "/Volumes/#{mdev}" do
+    system %{git commit -a #{Shellwords.join(ARGV)}} and
+      x %{ git push }
+  end
 when 'clone'
   from = ARGV.shift or fail "need from argument"
   from = device_name(from)
