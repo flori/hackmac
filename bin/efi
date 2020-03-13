@@ -70,6 +70,20 @@ def usage
         The EFI partion on DEVICE is used to find the clover kexts in
         subdirectory /Other.
 
+      diff        EFI partition
+
+        argument DEVICE (defaults to #{default_dev})
+
+        Shows changes as a diff with git, passes arguments to diff command
+        after "--".
+
+      commit      EFI partition
+
+        argument DEVICE (defaults to #{default_dev})
+
+        Commits changes with git, passes arguments to commit command
+        after "--".
+
       list        shows boot disk information (which EFI partition was used)
 
   end
