@@ -6,8 +6,8 @@ module Hackmac
   class KextUpgrader
     include FileUtils
 
-    def initialize(path:, config:)
-      @path, @config = path, config
+    def initialize(path:, config:, force: false)
+      @path, @config, @force = path, config, force
     end
 
     private
@@ -28,7 +28,7 @@ module Hackmac
         case
         when kext.remote_version.nil?
           puts "No source defined for #{kext}"
-        when kext.remote_version > kext.version
+        when kext.remote_version > kext.version || @force
           name, data = kext.remote_kext.download_asset
           if name
             File.secure_write(name, data)
@@ -48,7 +48,6 @@ module Hackmac
                 end
               end
             end
-            p kext_pathes
             kext_pathes.each do |kext_path|
               old_path = (Pathname.new(@path).dirname + File.basename(kext_path)).to_s
               if ask("Really upgrade #{old_path.inspect} to version #{kext.remote_version}? (y/n) ")

@@ -40,10 +40,11 @@ module Hackmac
     def remote_kext
       return @remote_kext if @remote_kext
       if @config
-        if github = @config.kext.sources[name]&.github
+        if source = @config.kext.sources[name] and github = source&.github
           auth = [ @config.github.user, @config.github.access_token ].compact
           auth.empty? and auth = nil
-          @remote_kext = Hackmac::KextSource.new(github, auth: auth)
+          suffix = source.debug? ? 'DEBUG' : 'RELEASE'
+          @remote_kext = Hackmac::KextSource.new(github, auth: auth, suffix: suffix)
         end
       end
     end

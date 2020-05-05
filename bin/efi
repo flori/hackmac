@@ -63,6 +63,8 @@ def usage
 
         argument PATH to the kext
 
+        argument FORCE == 'force' => always upgrade
+
       kexts       list kexts versions by clover
 
         argument DEVICE (defaults to #{default_dev})
@@ -175,8 +177,9 @@ when 'kext'
   path = ARGV.shift or fail 'need kext dir'
   puts Kext.new(path: path)
 when 'kext_upgrade'
-  path = ARGV.shift or fail 'need kext dir'
-  Hackmac::KextUpgrader.new(path: path, config: $config).perform
+  path  = ARGV.shift or fail 'need kext dir'
+  force = ARGV.shift == 'force'
+  Hackmac::KextUpgrader.new(path: path, config: $config, force: force).perform
 when 'list'
   disks = Disks.new
   efis = []
