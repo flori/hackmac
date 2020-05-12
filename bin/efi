@@ -142,13 +142,15 @@ when /\Adiff\z/
   mdev = git_args(default: %w[ --color --stat ])
   x %{sudo diskutil mount "#{mdev}"}
   cd "/Volumes/#{mdev}" do
+    x %{git add -A}
     x %{git diff #{Shellwords.join(ARGV)}}
   end
 when /\Acommit\z/
   mdev = git_args(default: %w[ -v ])
   x %{sudo diskutil mount "#{mdev}"}
   cd "/Volumes/#{mdev}" do
-    system %{git commit -a #{Shellwords.join(ARGV)}} and
+    x %{git add -A}
+    system %{git commit #{Shellwords.join(ARGV)}} and
       x %{ git push }
   end
 when 'clone'
@@ -167,10 +169,13 @@ when 'kexts'
   puts 'EFI'.yellow.bold + " (#{mdev})".bold
   puts Tabulo::Table.new(on_efi, align_header: :left, border: :modern) { |t|
     t.add_column(:name, header_styler: bold_head)
-    t.add_column(:itself, header: 'Version/Remote',
-                 styler: -> v, s { v.version < v.remote_version ? s.red : s.green rescue s.yellow },
-                 formatter: -> e { "%s %s %s" % [ e.version, ({ 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version] rescue nil), e.remote_version ] },
-                 header_styler: bold_head)
+    t.add_column(
+      :itself,
+      header: 'Version/Remote',
+      styler: -> v, s { v.version < v.remote_version ? s.red : s.green rescue s.yellow },
+      formatter: -> e { "%s %s %s" % [ e.version, ({ 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version] rescue nil), e.remote_version ] },
+      header_styler: bold_head
+    )
     t.add_column(:path, header_styler: bold_head)
   }.pack
 when 'kext'
@@ -195,12 +200,20 @@ when 'list'
       ContainerDisk.new(disk: e.ParentWholeDisk, limiter: 'internal').VolumesFromDisks
   end
   puts Tabulo::Table.new(efis, align_header: :left, border: :modern) { |t|
-    t.add_column(:Booted, styler: -> v, _ { v == ?☑ ? v.green : v.red }, header_styler: bold_head) { |e| e.Booted ? ?☑ : ?☐ }
+    t.add_column(
+      :Booted,
+      styler: -> v, _ { v == ?☑ ? v.green : v.red },
+      header_styler: bold_head
+    ) { |e| e.Booted ? ?☑ : ?☐ }
     t.add_column(:VolumeName, header_styler: bold_head)
     t.add_column(:DeviceIdentifier, header_styler: bold_head)
     t.add_column(:ParentWholeDisk, header_styler: bold_head)
     t.add_column(:Volumes, header_styler: bold_head) { |e| e.Volumes * ?, }
-    t.add_column(:MountPoint, styler: -> v, _ { v.empty? ? v : v.green }, header_styler: bold_head)
+    t.add_column(
+      :MountPoint,
+      styler: -> v, _ { v.empty? ? v : v.green },
+      header_styler: bold_head
+    )
   }.pack
 else
   fail "don't know how to #{command}"
