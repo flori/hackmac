@@ -139,7 +139,7 @@ when /\Aun?mount\z/
   x %{sudo diskutil unmount "#{mdev}"}
   # TODO remove /Volumes/mdev if it is a symlink
 when /\Adiff\z/
-  mdev = git_args(default: %w[ --color --stat ])
+  mdev = git_args(default: %w[ --color --stat --cached ])
   x %{sudo diskutil mount "#{mdev}"}
   cd "/Volumes/#{mdev}" do
     x %{git add -A}
