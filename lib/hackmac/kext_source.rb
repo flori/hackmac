@@ -11,7 +11,7 @@ module Hackmac
     def initialize(github, auth: nil, suffix: nil)
       @github  = github
       @auth    = auth
-      @suffix  = Regexp.quote(suffix || 'RELEASE')
+      @suffix  = (Regexp.quote(suffix) if suffix)
       account, repo = github.split(?/)
       @name = repo
       releases = URI.open(
@@ -42,12 +42,13 @@ module Hackmac
 
     def download_asset
       @release or return
-      asset = @release.assets.find { |a| a.name =~ /#@suffix.*\.zip\z/i } or return
+      asset = @release.assets.find { |a| a.name =~ /#@suffix.*\.(zip|tar\.gz)\z/i } or return
       data = URI.open(
         (GITHUB_API_URL % github) + ("/assets/%s" % asset.id),
         'Accept' => 'application/octet-stream',
-        http_basic_authentication: auth
-      ) { |o| o.read }
+        http_basic_authentication: auth,
+        &:read
+      )
       return asset.name, data
     end
 

@@ -42,7 +42,7 @@ module Hackmac
     end
 
     def self.load
-      path = File.expand_path('~/config')
+      path = File.expand_path('~/.config/hackmac')
       mkdir_p path
       ComplexConfig::Provider.config_dir = path
       config_path = File.join(path, 'hackmac.yml')

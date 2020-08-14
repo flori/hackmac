@@ -20,6 +20,19 @@ module Hackmac
       end
     end
 
+    def decompress(name)
+      print "Decompressing #{name.inspect}…"
+      case name
+      when /\.zip\z/i
+        system "unzip #{name.inspect}" or fail "Could not unzip #{name.inspect}"
+      when /\.tar\.gz\z/i
+        system "tar xfz #{name.inspect}" or fail "Could not tar xfz #{name.inspect}"
+      else
+        fail "Cannot decompress #{name.inspect}"
+      end
+      puts "done!"
+    end
+
     public
 
     def perform
@@ -32,7 +45,7 @@ module Hackmac
           name, data = kext.remote_kext.download_asset
           if name
             File.secure_write(name, data)
-            system "unzip #{name.inspect}" or fail "Could not unzip #{name.inspect}"
+            decompress(name)
             kext_pathes = []
             Find.find(dir) do |path|
               if File.directory?(path)

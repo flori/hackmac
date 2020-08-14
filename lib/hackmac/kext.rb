@@ -40,11 +40,20 @@ module Hackmac
     def remote_kext
       return @remote_kext if @remote_kext
       if @config
-        if source = @config.kext.sources[name] and github = source&.github
+        source = @config.kext.sources[name] or return
+        case
+        when github = source&.github?
           auth = [ @config.github.user, @config.github.access_token ].compact
           auth.empty? and auth = nil
-          suffix = source.debug? ? 'DEBUG' : 'RELEASE'
+          suffix =
+            case debug = source.debug?
+            when true       then 'DEBUG'
+            when false      then 'RELEASE'
+            when nil        then nil
+            end
           @remote_kext = Hackmac::KextSource.new(github, auth: auth, suffix: suffix)
+        when download = source&.download
+          @remote_kext = Hackmac::KextDownload.new(download.name, download.version, download.url)
         end
       end
     end
