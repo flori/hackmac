@@ -199,6 +199,9 @@ when 'list'
     e.Volumes =
       ContainerDisk.new(disk: e.ParentWholeDisk, limiter: 'internal').VolumesFromDisks
   end
+  aliases = $config.devices.to_h.each_with_object({}) do |(dk,dv),h|
+    h[dv[:name]] = dk
+  end
   puts Tabulo::Table.new(efis, align_header: :left, border: :modern) { |t|
     t.add_column(
       :Booted,
@@ -206,6 +209,7 @@ when 'list'
       header_styler: bold_head
     ) { |e| e.Booted ? ?☑ : ?☐ }
     t.add_column(:VolumeName, header_styler: bold_head)
+    t.add_column(:Alias, header_styler: bold_head) { |e| aliases[e.VolumeName] }
     t.add_column(:DeviceIdentifier, header_styler: bold_head)
     t.add_column(:ParentWholeDisk, header_styler: bold_head)
     t.add_column(:Volumes, header_styler: bold_head) { |e| e.Volumes * ?, }

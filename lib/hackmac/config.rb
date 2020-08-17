@@ -15,14 +15,14 @@ module Hackmac
         os: '/Applications/Install macOS Mojave.app'
       devices:
         main:
-          name: EFI
-        #backup:
-        #  name: BACKUP_EFI
+          name: 'OSX_EFI'
+        backup:
+          name: 'BACKUP_EFI'
       github:
         user: null
         access_token: null
       kext:
-        efi_path: EFI/CLOVER/kexts/Other
+        efi_path: 'EFI/CLOVER/kexts/Other'
         sources:
           AppleALC:
             github: 'acidanthera/AppleALC'
@@ -30,13 +30,21 @@ module Hackmac
             github: 'acidanthera/IntelMausi'
           Lilu:
             github: 'acidanthera/Lilu'
-          USBInjectAll:
-            github: 'Sniki/OS-X-USB-Inject-All'
+          #USBInjectAll:
+          #  github: 'Sniki/OS-X-USB-Inject-All'
           VirtualSMC:
             github: 'acidanthera/VirtualSMC'
+            debug: false
             plugins:
               - SMCProcessor
               - SMCSuperIO
+          BrcmPatchRAM2:
+            download:
+              name:    'BrcmPatchRAM'
+              version: '2.2.10'
+              url:     'https://bitbucket.org/RehabMan/os-x-brcmpatchram/downloads/RehabMan-BrcmPatchRAM-2018-0505.zip'
+            plugins:
+              - BrcmFirmwareData
           WhateverGreen:
             github: 'acidanthera/WhateverGreen'
     end
