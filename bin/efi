@@ -21,7 +21,7 @@ end
 def boot_dev
   unless @boot_dev
     value = x(%{bdmesg}, verbose: false).lines.
-      find { |l| l =~ /SelfDevicePath=(.*)\r/ and break $1 }
+      find { |l| l =~ /SelfDevicePath=(.*)\r?\n/ and break $1 }
     uuid  = value.split('\\').last[/(?:<?GPT,)([\h-]+)/, 1] or exit 1
     @boot_dev = x(%{partutil --search-uuid #{uuid}}).chomp
   end
