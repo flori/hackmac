@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
-# stub: hackmac 0.8.1 ruby lib
+# stub: hackmac 0.8.2 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "hackmac".freeze
-  s.version = "0.8.1"
+  s.version = "0.8.2"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Florian Frank".freeze]
-  s.date = "2020-08-22"
+  s.date = "2020-12-13"
   s.description = "This ruby gem provides some useful tools for working with a Hackintosh.".freeze
   s.email = "flori@ping.de".freeze
   s.executables = ["gfxmon".freeze, "usb".freeze, "efi".freeze]

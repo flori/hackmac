@@ -2,6 +2,7 @@ module Hackmac
 end
 
 require 'json'
+require 'pathname'
 require 'tins/xt'
 require 'hackmac/version'
 require 'hackmac/plist'

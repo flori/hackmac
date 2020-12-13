@@ -180,9 +180,11 @@ when 'kexts'
   }.pack
 when 'kext'
   path = ARGV.shift or fail 'need kext dir'
+  path = Pathname.new(path).expand_path.to_s
   puts Kext.new(path: path)
 when 'kext_upgrade'
   path  = ARGV.shift or fail 'need kext dir'
+  path = Pathname.new(path).expand_path.to_s
   force = ARGV.shift == 'force'
   Hackmac::KextUpgrader.new(path: path, config: $config, force: force).perform
 when 'list'
