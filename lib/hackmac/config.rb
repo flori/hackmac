@@ -39,10 +39,7 @@ module Hackmac
               - SMCProcessor
               - SMCSuperIO
           BrcmPatchRAM2:
-            download:
-              name:    'BrcmPatchRAM'
-              version: '2.2.10'
-              url:     'https://bitbucket.org/RehabMan/os-x-brcmpatchram/downloads/RehabMan-BrcmPatchRAM-2018-0505.zip'
+            github: 'acidanthera/BrcmPatchRAM'
             plugins:
               - BrcmFirmwareData
           WhateverGreen:
