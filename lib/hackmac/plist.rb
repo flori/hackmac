@@ -11,6 +11,10 @@ module Hackmac
       @plist.dup
     end
 
+    def each(&block)
+      as_hash.each(&block)
+    end
+
     def to_json(*a)
       as_hash.to_json(*a)
     end

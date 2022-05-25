@@ -18,18 +18,8 @@ def clone(from:, to:)
   x %{rsync -av --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
 end
 
-def boot_dev
-  unless @boot_dev
-    value = x(%{bdmesg}, verbose: false).lines.
-      find { |l| l =~ /SelfDevicePath=(.*)\r?\n/ and break $1 }
-    uuid  = value.split('\\').last[/(?:<?GPT,)([\h-]+)/, 1] or exit 1
-    @boot_dev = x(%{partutil --search-uuid #{uuid}}).chomp
-  end
-  @boot_dev
-end
-
 def usage
-  default_dev = boot_dev
+  default_dev = device_name('main')
 
   puts <<~end
 
@@ -86,8 +76,6 @@ def usage
         Commits changes with git, passes arguments to commit command
         after "--".
 
-      list        shows boot disk information (which EFI partition was used)
-
   end
 end
 
@@ -95,8 +83,6 @@ $config = Hackmac::Config.load
 
 def device_name(mdev)
   case mdev
-  when 'boot'
-    boot_dev
   when nil
     $config.devices.main.name
   else
@@ -187,40 +173,6 @@ when 'kext_upgrade'
   path = Pathname.new(path).expand_path.to_s
   force = ARGV.shift == 'force'
   Hackmac::KextUpgrader.new(path: path, config: $config, force: force).perform
-when 'list'
-  disks = Disks.new
-  efis = []
-  disks.AllDisksAndPartitions.each_with_object([]) { |d, ps|
-    uuids = Array(d['Partitions']&.map { |p| p['DiskUUID'] }&.compact)
-    efis.concat uuids.
-      map { |uuid| DiskInfo.new(disk: uuid) }.
-      select { |di| di.FilesystemType == 'msdos' }
-  }
-  efis.each do |e|
-    e.Booted = e.DeviceIdentifier == boot_dev
-    e.Volumes =
-      ContainerDisk.new(disk: e.ParentWholeDisk, limiter: 'internal').VolumesFromDisks
-  end
-  aliases = $config.devices.to_h.each_with_object({}) do |(dk,dv),h|
-    h[dv[:name]] = dk
-  end
-  puts Tabulo::Table.new(efis, align_header: :left, border: :modern) { |t|
-    t.add_column(
-      :Booted,
-      styler: -> v, _ { v == ?☑ ? v.green : v.red },
-      header_styler: bold_head
-    ) { |e| e.Booted ? ?☑ : ?☐ }
-    t.add_column(:VolumeName, header_styler: bold_head)
-    t.add_column(:Alias, header_styler: bold_head) { |e| aliases[e.VolumeName] }
-    t.add_column(:DeviceIdentifier, header_styler: bold_head)
-    t.add_column(:ParentWholeDisk, header_styler: bold_head)
-    t.add_column(:Volumes, header_styler: bold_head) { |e| e.Volumes * ?, }
-    t.add_column(
-      :MountPoint,
-      styler: -> v, _ { v.empty? ? v : v.green },
-      header_styler: bold_head
-    )
-  }.pack
 else
   fail "don't know how to #{command}"
 end
