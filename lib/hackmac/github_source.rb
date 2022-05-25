@@ -3,7 +3,7 @@ require 'json'
 require 'tins/string_version'
 
 module Hackmac
-  class KextSource
+  class GithubSource
     GITHUB_API_URL = 'https://api.github.com/repos/%s/releases'
 
     include Tins::StringVersion

@@ -51,9 +51,9 @@ module Hackmac
             when false      then 'RELEASE'
             when nil        then nil
             end
-          @remote_kext = Hackmac::KextSource.new(github, auth: auth, suffix: suffix)
+          @remote_kext = Hackmac::GithubSource.new(github, auth: auth, suffix: suffix)
         when download = source&.download
-          @remote_kext = Hackmac::KextDownload.new(download.name, download.version, download.url)
+          @remote_kext = Hackmac::URLDownload.new(download.name, download.version, download.url)
         end
       end
     end

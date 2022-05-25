@@ -1,9 +1,9 @@
 # -*- encoding: utf-8 -*-
-# stub: hackmac 0.8.3 ruby lib
+# stub: hackmac 1.0.0 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "hackmac".freeze
-  s.version = "0.8.3"
+  s.version = "1.0.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
@@ -12,8 +12,8 @@ Gem::Specification.new do |s|
   s.description = "This ruby gem provides some useful tools for working with a Hackintosh.".freeze
   s.email = "flori@ping.de".freeze
   s.executables = ["efi".freeze, "gfxmon".freeze, "usb".freeze]
-  s.extra_rdoc_files = ["README.md".freeze, "lib/hackmac.rb".freeze, "lib/hackmac/config.rb".freeze, "lib/hackmac/disks.rb".freeze, "lib/hackmac/kext.rb".freeze, "lib/hackmac/kext_download.rb".freeze, "lib/hackmac/kext_source.rb".freeze, "lib/hackmac/kext_upgrader.rb".freeze, "lib/hackmac/plist.rb".freeze, "lib/hackmac/utils.rb".freeze, "lib/hackmac/version.rb".freeze]
-  s.files = [".gitignore".freeze, "Gemfile".freeze, "README.md".freeze, "Rakefile".freeze, "VERSION".freeze, "bin/efi".freeze, "bin/gfxmon".freeze, "bin/usb".freeze, "hackmac.gemspec".freeze, "lib/hackmac.rb".freeze, "lib/hackmac/config.rb".freeze, "lib/hackmac/disks.rb".freeze, "lib/hackmac/kext.rb".freeze, "lib/hackmac/kext_download.rb".freeze, "lib/hackmac/kext_source.rb".freeze, "lib/hackmac/kext_upgrader.rb".freeze, "lib/hackmac/plist.rb".freeze, "lib/hackmac/utils.rb".freeze, "lib/hackmac/version.rb".freeze]
+  s.extra_rdoc_files = ["README.md".freeze, "lib/hackmac.rb".freeze, "lib/hackmac/asset_tools.rb".freeze, "lib/hackmac/config.rb".freeze, "lib/hackmac/disks.rb".freeze, "lib/hackmac/github_source.rb".freeze, "lib/hackmac/kext.rb".freeze, "lib/hackmac/kext_upgrader.rb".freeze, "lib/hackmac/oc.rb".freeze, "lib/hackmac/oc_upgrader.rb".freeze, "lib/hackmac/plist.rb".freeze, "lib/hackmac/url_download.rb".freeze, "lib/hackmac/utils.rb".freeze, "lib/hackmac/version.rb".freeze]
+  s.files = [".gitignore".freeze, "Gemfile".freeze, "README.md".freeze, "Rakefile".freeze, "VERSION".freeze, "bin/efi".freeze, "bin/gfxmon".freeze, "bin/usb".freeze, "hackmac.gemspec".freeze, "lib/hackmac.rb".freeze, "lib/hackmac/asset_tools.rb".freeze, "lib/hackmac/config.rb".freeze, "lib/hackmac/disks.rb".freeze, "lib/hackmac/github_source.rb".freeze, "lib/hackmac/kext.rb".freeze, "lib/hackmac/kext_upgrader.rb".freeze, "lib/hackmac/oc.rb".freeze, "lib/hackmac/oc_upgrader.rb".freeze, "lib/hackmac/plist.rb".freeze, "lib/hackmac/url_download.rb".freeze, "lib/hackmac/utils.rb".freeze, "lib/hackmac/version.rb".freeze]
   s.homepage = "http://github.com/flori/hackmac".freeze
   s.rdoc_options = ["--title".freeze, "Hackmac - Some useful tools for working with a Hackintosh".freeze, "--main".freeze, "README.md".freeze]
   s.rubygems_version = "3.3.13".freeze

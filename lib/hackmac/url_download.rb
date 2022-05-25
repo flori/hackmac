@@ -2,7 +2,7 @@ require 'open-uri'
 require 'tins/string_version'
 
 module Hackmac
-  class KextDownload
+  class URLDownload
     include Tins::StringVersion
 
     def initialize(name, version, url)

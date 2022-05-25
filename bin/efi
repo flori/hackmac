@@ -62,6 +62,12 @@ def usage
         The EFI partion on DEVICE is used to find the clover kexts in
         subdirectory /Other.
 
+      oc          shows currently booted OpenCore version
+
+      oc_upgrade EFI partition
+
+                 Upgrade OpenCore on this partition to newest version
+
       diff        EFI partition
 
         argument DEVICE (defaults to #{default_dev})
@@ -173,6 +179,14 @@ when 'kext_upgrade'
   path = Pathname.new(path).expand_path.to_s
   force = ARGV.shift == 'force'
   Hackmac::KextUpgrader.new(path: path, config: $config, force: force).perform
+when 'oc'
+  x %{nvram 4D1FDA02-38C7-4A6A-9CC6-4BCCA8B30102:opencore-version}
+when 'oc_remote'
+  puts OC.new(config: $config)
+when 'oc_upgrade'
+  mdev = device_name(ARGV.shift)
+  ocu = OCUpgrader.new(mdev: mdev, config: $config)
+  ocu.perform
 else
   fail "don't know how to #{command}"
 end
