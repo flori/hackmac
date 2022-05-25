@@ -11,19 +11,31 @@ module Hackmac
     DEFAULT = <<~end
       ---
       efi:
-        source: 'https://github.com/flori/EFI-some.git'
+        source: 'storage.gate.ping.de:/git/EFI-hacmaxi.git'
       usb:
-        os: '/Applications/Install macOS Mojave.app'
+        os: '/Applications/Install macOS Monterey.app'
       devices:
         main:
-          name: 'OSX_EFI'
+          name: 'EFI'
         backup:
           name: 'BACKUP_EFI'
       github:
         user: null
         access_token: null
+      oc:
+        efi_path: 'EFI'
+        source:
+          github: 'acidanthera/OpenCorePkg'
+          debug: true
+        install_path: 'X64/EFI'
+        files:
+          - 'BOOT/BOOTx64.efi'
+          - 'OC/OpenCore.efi'
+          - 'OC/Drivers/OpenHfsPlus.efi'
+          - 'OC/Drivers/OpenRuntime.efi'
+          - 'OC/Tools/OpenShell.efi'
       kext:
-        efi_path: 'EFI/CLOVER/kexts/Other'
+        efi_path: 'EFI/OC/Kexts'
         sources:
           AppleALC:
             github: 'acidanthera/AppleALC'
@@ -45,6 +57,8 @@ module Hackmac
               - BrcmFirmwareData
           WhateverGreen:
             github: 'acidanthera/WhateverGreen'
+          LucyRTL8125Ethernet:
+            github: 'Mieze/LucyRTL8125Ethernet'
     end
 
     def self.load(path: ENV.fetch('CONFIG_PATH', '~/.config/hackmac/hackmac.yml'))
