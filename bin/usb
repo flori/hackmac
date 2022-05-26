@@ -30,6 +30,7 @@ x %{sudo "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume #{mo
 x %{sudo mkdir -p #{mountpoint_efi.inspect}}
 x %{sudo mount -t msdos #{(dev + "s1").inspect} #{mountpoint_efi.inspect}}
 cd mountpoint_efi do
+  x %{sudo chown $USER .}
   x %{git init}
   x %{git remote add origin #{$config.efi.source.inspect}}
   x %{git pull origin master}
