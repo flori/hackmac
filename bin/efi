@@ -68,6 +68,10 @@ def usage
 
                  Upgrade OpenCore on this partition to newest version
 
+      oc_validate EFI partition
+
+                  validates config.plist in the given EFI
+
       diff        EFI partition
 
         argument DEVICE (defaults to #{default_dev})
@@ -187,6 +191,10 @@ when 'oc_upgrade'
   mdev = device_name(ARGV.shift)
   ocu = OCUpgrader.new(mdev: mdev, config: $config)
   ocu.perform
+when 'oc_validate'
+  mdev = device_name(ARGV.shift)
+  ocv = OCValidator.new(mdev: mdev, config: $config)
+  ocv.perform or exit 1
 else
   fail "don't know how to #{command}"
 end
