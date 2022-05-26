@@ -25,6 +25,8 @@ ask("Really erase #{dev.inspect} and install #{$config.usb.os.inspect}? (y/n) ")
 
 x %{diskutil partitionDisk #{dev.inspect} GPT JHFS+ "USB" 100%}
 
+x %{sudo "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume #{mountpoint.inspect} --nointeraction}
+
 x %{sudo mkdir -p #{mountpoint_efi.inspect}}
 x %{sudo mount -t msdos #{(dev + "s1").inspect} #{mountpoint_efi.inspect}}
 cd mountpoint_efi do
@@ -32,5 +34,3 @@ cd mountpoint_efi do
   x %{git remote add origin #{$config.efi.source.inspect}}
   x %{git pull origin master}
 end
-
-x %{sudo "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume #{mountpoint.inspect} --nointeraction}
