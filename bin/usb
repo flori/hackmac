@@ -8,6 +8,8 @@ $config = Hackmac::Config.load
 
 dev = ARGV.shift or fail "need usb device"
 
+dev = File.basename(dev)
+
 mountpoint = '/Volumes/USB'
 mountpoint_efi = '/Volumes/USB_EFI'
 
