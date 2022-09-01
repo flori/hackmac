@@ -23,5 +23,5 @@ GemHadar do
   dependency  'plist'
   dependency  'tabulo'
   dependency  'search_ui'
-  development_dependency 'byebug'
+  development_dependency 'debug'
 end
