@@ -13,7 +13,7 @@ module Hackmac
 
     def x(cmd, verbose: true)
       prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
-      output = `#{cmd}`
+      output = `#{cmd} 2>&1`
       if $?.success?
         print "#{prompt} #{cmd}".green
         puts verbose ? "" : " >/dev/null".yellow
