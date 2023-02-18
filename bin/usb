@@ -10,18 +10,8 @@ dev = ARGV.shift or fail "need usb device"
 
 dev = File.basename(dev)
 
-mountpoint = '/Volumes/USB'
-mountpoint_efi = '/Volumes/USB_EFI'
-
-if File.directory?(mountpoint)
-  puts " *** #{mountpoint} already mounted!".red
-  exit 1
-end
-
-if File.directory?(mountpoint_efi)
-  puts " *** #{mountpoint_efi} already mounted!".red
-  exit 1
-end
+mountpoint     = $config.usb.mp
+mountpoint_efi = '/Volumes/%s' % $config.devices.usb.name
 
 ask("Really erase #{dev.inspect} and install #{$config.usb.os.inspect}? (y/n) ") or exit
 
@@ -31,6 +21,7 @@ x %{sudo "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume #{mo
 
 x %{sudo mkdir -p #{mountpoint_efi.inspect}}
 x %{sudo mount -t msdos #{('/dev/' + dev + 's1').inspect} #{mountpoint_efi.inspect}}
+
 cd mountpoint_efi do
   x %{sudo chown $USER .}
   x %{git init}
