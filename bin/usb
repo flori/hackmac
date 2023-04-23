@@ -12,6 +12,9 @@ dev = File.basename(dev)
 
 mountpoint     = $config.usb.mp
 mountpoint_efi = '/Volumes/%s' % $config.devices.usb.name
+unless File.exist?($config.usb.os)
+  fail "Cannot find #{$config.usb.os.inspect}!"
+end
 
 ask("Really erase #{dev.inspect} and install #{$config.usb.os.inspect}? (y/n) ") or exit
 
@@ -27,4 +30,5 @@ cd mountpoint_efi do
   x %{git init}
   x %{git remote add origin #{$config.efi.source.inspect}}
   x %{git pull origin master}
+  x %{git branch --set-upstream-to=origin/master}
 end
