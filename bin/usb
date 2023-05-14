@@ -15,12 +15,15 @@ mountpoint_efi = '/Volumes/%s' % $config.devices.usb.name
 unless File.exist?($config.usb.os)
   fail "Cannot find #{$config.usb.os.inspect}!"
 end
-
+cim = "#{$config.usb.os}/Contents/Resources/createinstallmedia"
+unless File.exist?(cim)
+  fail "Cannot find #{cim.inspect}!"
+end
 ask("Really erase #{dev.inspect} and install #{$config.usb.os.inspect}? (y/n) ") or exit
 
 x %{diskutil partitionDisk #{dev.inspect} GPT JHFS+ "USB" 100%}
 
-x %{sudo "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume #{mountpoint.inspect} --nointeraction}
+x %{sudo #{cim.inspect} --volume #{mountpoint.inspect} --nointeraction}
 
 x %{sudo mkdir -p #{mountpoint_efi.inspect}}
 x %{sudo mount -t msdos #{('/dev/' + dev + 's1').inspect} #{mountpoint_efi.inspect}}
