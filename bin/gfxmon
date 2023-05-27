@@ -45,18 +45,11 @@ def ps
   }
 end
 
-def format_bytes(n, v)
-  if n =~ /bytes/i
-    Tins::Unit.format(v, format: '%.3f%U', unit: '')
-  else
-    v.to_s
-  end
-end
-
 def list(ps)
   max = ps.keys.max_by(&:size)&.size&.to_i
+  graph = Hackmac::Graph.new(title: '')
   puts ps.map { |n, v|
-    ("%-#{max}s" % n) + " " + ("%s" % format_bytes(n, v)).bold
+    ("%-#{max}s" % n) + " " + ("%s" % graph.send(derive_formatter(n), v)).bold
   }
 end
 
@@ -87,75 +80,36 @@ def choose_metric(ps)
   fail "Metric #{metric} not known"
 end
 
+def derive_formatter(metric)
+  case metric
+  when /bytes/i
+    :as_bytes
+  when /Hz/
+    :as_hertz
+  when /\(C\)/
+    :as_celsius
+  when /\(%\)/
+    :as_percent
+  else
+    :as_default
+  end
+end
+
 def display_graph
   if metric = choose_metric(ps)
     sleep_duration = [ 1, ($opts[?n] || 10).to_i ].max
-    data = []
-    print hide_cursor
-    at_exit do
-      print reset, clear_screen, move_home, show_cursor
-    end
-    trap(:SIGWINCH) {
-      lines, cols = Tins::Terminal.winsize
-      print clear_screen,
-        move_to(lines / 2, (cols - "Zzz…".size) / 2) { "Zzz…".italic }
-    }
-    loop do
-      print clear_screen
-
-      lines, cols = Tins::Terminal.winsize
-
-      as_title = -> t {
-        move_to(lines, (cols - t.size) / 2) { t.bold }
-      }
-
-      case value = ps[metric]
-      when Float
-        data << value
-      else
-        data << value.to_i
-      end
-      data = data.last(cols)
-
-      y_width = (data.max - data.min).to_f
-      if y_width == 0
-        print(
-          as_title.("#{metric} / #{sleep_duration}s"),
-          move_to(lines / 2, (cols - "no data".size) / 2) { "no data".italic }
-        )
-        sleep sleep_duration
-        print clear_screen
-        next
-      end
-
-      unless c = $opts[?c]
-        cs = (21..226).select { |d|
-          Term::ANSIColor::Attribute[d].to_rgb_triple.to_hsl_triple.
-            lightness < 40
-        }
-        c = cs[ metric.bytes.reduce(0, :+) % cs.size ]
-      end
-      color       = Term::ANSIColor::Attribute[c]
-      color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
-
-      data.each_with_index do |value, x|
-        x = x + cols - data.size + 1
-        y = lines - (((value - data.min) * lines / y_width)).round + 1
-        y.upto(lines) do |iy|
-          print move_to(iy, x) { ' '.on_color(y == iy ? color : color_light) }
-        end
-      end
-
-      print(
-        as_title.("#{metric} #{format_bytes(metric, data.last)} / #{sleep_duration}s"),
-        move_home { format_bytes(metric, data.max).bold },
-        move_to_line(lines) { format_bytes(metric, data.min).bold }
-      )
-
-      sleep sleep_duration
-    end
+    format_value = derive_formatter(metric)
+    graph = Hackmac::Graph.new(
+      title: metric,
+      sleep: sleep_duration,
+      value: -> _ { ps[metric] },
+      color: $opts[?c],
+      format_value:
+    )
+    graph.start
   end
-rescue Interrupt
+ensure 
+  graph&.stop
 end
 
 case
