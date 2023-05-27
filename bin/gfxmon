@@ -13,7 +13,7 @@ require 'amatch'
 require 'search_ui'
 include SearchUI
 
-$opts = go 'c:g:n:jlh', defaults: { ?s => true, ?n => 10 }
+$opts = go 'c:m:n:jlh', defaults: { ?s => true, ?n => 5 }
 
 def usage
   puts <<~end
@@ -25,7 +25,7 @@ def usage
       -l          output GPU performance data as list
       -j          output GPU performance data as json
       -n SECONDS  measure every SECONDS
-      -g METRIC   output graph for performance METRIC
+      -m METRIC   output graph for performance METRIC
       -c COLOR    output graph in this terminal COLOR (between 0 - 255)
 
   end
@@ -54,7 +54,7 @@ def list(ps)
 end
 
 def choose_metric(ps)
-  case metric = $opts[?g]
+  case metric = $opts[?m]
   when nil
     ps_names = ps.keys
     metric = Search.new(

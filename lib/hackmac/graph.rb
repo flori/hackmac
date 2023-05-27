@@ -29,7 +29,14 @@ class Hackmac::Graph
     self
   end
 
-  def initialize(title:, value: -> i { 0 }, format_value: nil, sleep: nil, color: nil)
+  def initialize(
+    title:,
+    value: -> i { 0 },
+    format_value: nil,
+    sleep: nil,
+    color: nil
+  )
+    sleep >= 0 or raise ArgumentError, 'sleep has to be >= 0'
     @title        = title
     @value        = value
     @format_value = format_value
@@ -37,13 +44,12 @@ class Hackmac::Graph
     @continue     = false
     @data         = []
     @color        = color
+    @mutex        = Mutex.new
   end
 
   def start
     install_handlers
     full_reset
-    perform hide_cursor
-    @continue = true
     start_loop
   end
 
@@ -59,42 +65,45 @@ class Hackmac::Graph
     color       = pick_color
     color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
     i           = 0
+    @continue = true
     while @continue
-      @lines, @cols = winsize
+      @full_reset and full_reset
+      perform hide_cursor
 
       @data << @value.(i)
-      @data = data.last(cols)
+      @data = data.last(columns)
 
       y_width = (data.max - data.min).to_f
       if y_width == 0
-        perform(
-          clear_screen,
-          as_title("#@title / #{sleep_duration}"),
-          move_to(lines / 2, (cols - "no data".size) / 2) { italic{"no data"} }
-        )
-        maybe_sleep
+        @display.reset.bottom.styled(:bold).
+          write_centered("#@title / #{sleep_duration}").
+          reset.centered.styled(:italic).write_centered("no data")
+        perform_display_diff
+        sleep_now
         next
       end
 
-      perform clear_screen
+      @display.reset
       data.each_with_index do |value, x|
-        x = x + cols - data.size + 1
+        x = x + columns - data.size + 1
         y = lines - (((value - data.min) * lines / y_width)).round + 1
         y.upto(lines) do |iy|
-          perform move_to(iy, x) { on_color(y == iy ? color : color_light){' '} }
+          @display.at(iy, x).on_color(
+            y == iy ? color : color_light
+          ).write(' ')
         end
       end
 
-      perform(
-        as_title("#@title #{format_value(data.last)} / #{sleep_duration}"),
-        move_home { format_value(data.max).bold },
-        move_to_line(lines) { format_value(data.min).bold }
-      )
+      @display.reset.bottom.styled(:bold).
+        write_centered("#@title #{format_value(data.last)} / #{sleep_duration}")
+      @display.reset.styled(:bold).
+        left.top.write(format_value(data.max)).
+        left.bottom.write(format_value(data.min))
 
-      maybe_sleep
+      perform_display_diff
+      sleep_now
     end
-    full_reset
-  rescue *[ Interrupt, defined?(IRB::Abort) && IRB::Abort ].compact
+  ensure
     stop
   end
 
@@ -102,18 +111,18 @@ class Hackmac::Graph
     print *a
   end
 
-  attr_reader :cols
+  def columns
+    @display.columns
+  end
 
-  attr_reader :lines
+  def lines
+    @display.lines
+  end
 
   attr_reader :data
 
-  def as_title(text)
-    move_to(lines, (cols - text.size) / 2) { bold{text} }
-  end
-
   def sleep_duration
-    @sleep ? "#{@sleep}s" : "once"
+    "#{@sleep}s"
   end
 
   def format_value(value)
@@ -144,13 +153,21 @@ class Hackmac::Graph
     ]
   end
 
-  def maybe_sleep
-    if @sleep
-      sleep @sleep
-    else
-      @continue = false
+  def sleep_now
+    sleep @sleep
+  end
+
+  def perform_display_diff
+    @mutex.synchronize do
+      unless @old_display && @old_display.dimensions == @display.dimensions
+        @old_display = @display.dup.clear
+      end
+      perform @display - @old_display
+      @display, @old_display = @old_display.clear, @display
+      perform move_to(lines, columns)
     end
   end
+
 
   def normalize_value(value)
     case value
@@ -162,20 +179,23 @@ class Hackmac::Graph
   end
 
   def full_reset
-    perform reset, clear_screen, move_home, show_cursor
-  end
-
-  def winsize
-    Tins::Terminal.winsize
+    @mutex.synchronize do
+      perform reset, clear_screen, move_home, show_cursor
+      winsize = Tins::Terminal.winsize
+      @display     = Hackmac::Graph::Display.new(*winsize)
+      @old_display = Hackmac::Graph::Display.new(*winsize)
+      perform @display
+      @full_reset = false
+    end
   end
 
   def install_handlers
     at_exit { full_reset }
-
-    trap(:SIGWINCH) {
-      lines, cols = winsize
-      perform clear_screen,
-        move_to(lines / 2, (cols - "Zzz…".size) / 2) { "Zzz…".italic }
-    }
+    trap(:SIGWINCH) do
+      @full_reset = true
+      perform reset, clear_screen, move_home, 'Zzz…'
+    end
   end
 end
+
+require 'hackmac/graph/display'
