@@ -47,9 +47,9 @@ end
 
 def list(ps)
   max = ps.keys.max_by(&:size)&.size&.to_i
-  graph = Hackmac::Graph.new(title: '')
+  include Hackmac::Graph::Formatters
   puts ps.map { |n, v|
-    ("%-#{max}s" % n) + " " + ("%s" % graph.send(derive_formatter(n), v)).bold
+    ("%-#{max}s" % n) + " " + ("%s" % send(derive_formatter(n), v)).bold
   }
 end
 

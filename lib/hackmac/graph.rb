@@ -4,6 +4,31 @@ require 'tins'
 class Hackmac::Graph
   include Term::ANSIColor
 
+  include\
+  module Formatters
+    def as_bytes(value)
+      Tins::Unit.format(value, prefix: :uc, format: '%.3f%U', unit: 'B')
+    end
+
+    def as_hertz(value)
+      Tins::Unit.format(value, prefix: :uc, format: '%.3f%U', unit: 'Hz')
+    end
+
+    def as_celsius(value)
+      "#{value}°"
+    end
+
+    def as_percent(value)
+      "#{value}%"
+    end
+
+    def as_default(value)
+      value.to_s
+    end
+
+    self
+  end
+
   def initialize(title:, value: -> i { 0 }, format_value: nil, sleep: nil, color: nil)
     @title        = title
     @value        = value
@@ -100,26 +125,6 @@ class Hackmac::Graph
     else
       send(:as_default, value)
     end
-  end
-
-  def as_bytes(value)
-    Tins::Unit.format(value, prefix: :uc, format: '%.3f%U', unit: 'B')
-  end
-
-  def as_hertz(value)
-    Tins::Unit.format(value, prefix: :uc, format: '%.3f%U', unit: 'Hz')
-  end
-
-  def as_celsius(value)
-    "#{value}°"
-  end
-
-  def as_percent(value)
-    "#{value}%"
-  end
-
-  def as_default(value)
-    value.to_s
   end
 
   def pick_color
