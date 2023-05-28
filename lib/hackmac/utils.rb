@@ -20,6 +20,7 @@ module Hackmac
         puts "✅ Command succeded!".green
       else
         puts "⚠️  Command #{cmd.inspect} failed with exit status #{$?.exitstatus}".on_red.white
+        exit $?.exitstatus
       end
       if verbose
         puts output.italic
