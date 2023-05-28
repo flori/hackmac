@@ -8,13 +8,12 @@ class Hackmac::Graph
       end
 
       def to_s
-        ANSI.color(color) {
-          ANSI.on_color(on_color) {
-            styles.inject(char) { |c, s|
-              ANSI.send(s) { c }
-            }
-          }
-        }
+        result = ''
+        result << ANSI.color(color)
+        result << ANSI.on_color(on_color)
+        styles.each { |s| result << ANSI.send(s) }
+        result << char
+        result << ANSI.reset
       end
     end
 

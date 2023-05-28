@@ -64,13 +64,14 @@ class Hackmac::Graph
     full_reset
     color       = pick_color
     color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
-    i           = 0
+    @counter    = -1
     @continue = true
     while @continue
+      @start = Time.now
       @full_reset and full_reset
       perform hide_cursor
 
-      @data << @value.(i)
+      @data << @value.(@counter += 1)
       @data = data.last(columns)
 
       y_width = (data.max - data.min).to_f
@@ -103,6 +104,7 @@ class Hackmac::Graph
       perform_display_diff
       sleep_now
     end
+  rescue Interrupt
   ensure
     stop
   end
@@ -154,7 +156,12 @@ class Hackmac::Graph
   end
 
   def sleep_now
-    sleep @sleep
+    duration = if @start
+                 [ @sleep - (Time.now - @start).to_f, 0 ].max
+               else
+                 @sleep
+               end
+    sleep duration
   end
 
   def perform_display_diff
@@ -162,7 +169,16 @@ class Hackmac::Graph
       unless @old_display && @old_display.dimensions == @display.dimensions
         @old_display = @display.dup.clear
       end
-      perform @display - @old_display
+      diff = @display - @old_display
+      if ENV['DEBUG_BYTESIZE']
+        unless @last
+          STDERR.puts %w[ size duration ] * ?\t
+        else
+          STDERR.puts [ diff.size, (Time.now - @last).to_f ] * ?\t
+        end
+        @last = Time.now
+      end
+      perform diff
       @display, @old_display = @old_display.clear, @display
       perform move_to(lines, columns)
     end
