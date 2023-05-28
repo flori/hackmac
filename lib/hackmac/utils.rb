@@ -13,17 +13,16 @@ module Hackmac
 
     def x(cmd, verbose: true)
       prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
+      print "#{prompt} #{cmd}".color(27)
+      puts verbose ? "" : " >/dev/null".yellow
       output = `#{cmd} 2>&1`
       if $?.success?
-        print "#{prompt} #{cmd}".green
-        puts verbose ? "" : " >/dev/null".yellow
+        puts "✅ Command succeded!".green
       else
-        print "#{prompt} #{cmd}".red
-        puts verbose ? "" : " >/dev/null".yellow
-        STDERR.puts "command #{cmd.inspect} failed with exit status #{$?.exitstatus}".on_red.white
+        puts "⚠️  Command #{cmd.inspect} failed with exit status #{$?.exitstatus}".on_red.white
       end
       if verbose
-        print output.italic
+        puts output.italic
       end
       output
     end
