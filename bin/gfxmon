@@ -33,16 +33,7 @@ def usage
 end
 
 def ps
-  `ioreg -l`.lines.find { |l|
-    if l =~ /"PerformanceStatistics" = {([^}]+)}/
-      break Hash[
-        $1.split(?,).map { |a|
-          a = a.split(?=)
-          [ a[0][1..-2], (Integer(a[1]) rescue a[1]) ]
-        }.sort_by { |name, _| name.downcase }
-      ]
-    end
-  }
+  Hackmac::IOReg.new(key: 'PerformanceStatistics').as_hash
 end
 
 def list(ps)

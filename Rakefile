@@ -23,5 +23,6 @@ GemHadar do
   dependency  'plist'
   dependency  'tabulo'
   dependency  'search_ui'
+  dependency  'hashie'
   development_dependency 'debug'
 end
