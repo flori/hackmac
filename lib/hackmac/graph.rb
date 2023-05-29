@@ -1,5 +1,6 @@
 require 'term/ansicolor'
 require 'tins'
+require 'digest/md5'
 
 class Hackmac::Graph
   include Term::ANSIColor
@@ -24,6 +25,15 @@ class Hackmac::Graph
 
     def as_default(value)
       value.to_s
+    end
+
+    def derive_color_from_string(string)
+      cs = (21..226).select { |d|
+        Term::ANSIColor::Attribute[d].to_rgb_triple.to_hsl_triple.
+          lightness < 40
+      }
+      s = Digest::MD5.digest(string).unpack('Q*')
+      cs[ (s.first ^ s.last) % cs.size ]
     end
 
     self
@@ -144,11 +154,7 @@ class Hackmac::Graph
       when Proc
         @color.(@title)
       when nil
-        cs = (21..226).select { |d|
-          Term::ANSIColor::Attribute[d].to_rgb_triple.to_hsl_triple.
-            lightness < 40
-        }
-        cs[ @title.bytes.reduce(0, :+) % cs.size ]
+        derive_color_from_string(@title)
       else
         @color
       end
