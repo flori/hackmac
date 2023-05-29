@@ -2,7 +2,7 @@
 efi:
   source: 'storage.gate.ping.de:/git/EFI-hacmaxi.git'
 usb:
-  os: '/Volumes/Install macOS Monterey/Install macOS Monterey.app'
+  os: '/Volumes/Install macOS Ventura/Install macOS Ventura.app'
   mp: '/Volumes/USB'
 devices:
   main:
@@ -53,4 +53,3 @@ kext:
     #  github: 'Mieze/LucyRTL8125Ethernet'
     USBToolBox:
       github: 'USBToolBox/kext'
-

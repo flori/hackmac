@@ -25,7 +25,7 @@ def usage
 
     Usage #{File.basename($0)} [command] [arguments]
 
-    Set CONFIG_PATH to the config file, e. g. ~/.config/hackmac/foobar.yml
+    Set HACKMAC_CONFIG to the config file, e. g. ~/.config/hackmac/foobar.yml
 
     Commands are
 
