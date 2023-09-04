@@ -33,7 +33,7 @@ class Hackmac::Graph
           lightness < 40
       }
       s = Digest::MD5.digest(string).unpack('Q*')
-      cs[ (s.first ^ s.last) % cs.size ]
+      cs[ s.first % cs.size ]
     end
 
     self
