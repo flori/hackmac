@@ -23,6 +23,7 @@ GemHadar do
   dependency  'plist'
   dependency  'tabulo'
   dependency  'search_ui'
+  dependency  'infobar',        '>=0.7.1'
   dependency  'hashie'
   development_dependency 'debug'
 end
