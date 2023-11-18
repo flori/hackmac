@@ -21,11 +21,9 @@ unless File.exist?(cim)
 end
 ask("Really erase #{dev.inspect} and install #{$config.usb.os.inspect}? (y/n) ") or exit
 
-x %{diskutil partitionDisk #{dev.inspect} GPT JHFS+ "USB" 100%},
-  busy: 'Partitioning disk'
+x %{diskutil partitionDisk #{dev.inspect} GPT JHFS+ "USB" 100%}
 
-x %{sudo #{cim.inspect} --volume #{mountpoint.inspect} --nointeraction},
-  busy: 'Creating Install Media'
+x %{sudo #{cim.inspect} --volume #{mountpoint.inspect} --nointeraction}
 
 x %{sudo mkdir -p #{mountpoint_efi.inspect}}
 x %{sudo mount -t msdos #{('/dev/' + dev + 's1').inspect} #{mountpoint_efi.inspect}}

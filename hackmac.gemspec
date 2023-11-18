@@ -1,14 +1,14 @@
 # -*- encoding: utf-8 -*-
-# stub: hackmac 1.7.0 ruby lib
+# stub: hackmac 1.7.1 ruby lib
 
 Gem::Specification.new do |s|
   s.name = "hackmac".freeze
-  s.version = "1.7.0"
+  s.version = "1.7.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0".freeze) if s.respond_to? :required_rubygems_version=
   s.require_paths = ["lib".freeze]
   s.authors = ["Florian Frank".freeze]
-  s.date = "2023-10-09"
+  s.date = "2023-11-18"
   s.description = "This ruby gem provides some useful tools for working with a Hackintosh.".freeze
   s.email = "flori@ping.de".freeze
   s.executables = ["efi".freeze, "gfxmon".freeze, "usb".freeze]
@@ -30,6 +30,5 @@ Gem::Specification.new do |s|
   s.add_runtime_dependency(%q<plist>.freeze, [">= 0"])
   s.add_runtime_dependency(%q<tabulo>.freeze, [">= 0"])
   s.add_runtime_dependency(%q<search_ui>.freeze, [">= 0"])
-  s.add_runtime_dependency(%q<infobar>.freeze, [">= 0.7.1"])
   s.add_runtime_dependency(%q<hashie>.freeze, [">= 0"])
 end

@@ -6,34 +6,22 @@ require 'tabulo'
 require 'fileutils'
 require 'tmpdir'
 require 'shellwords'
-require 'infobar'
 
 module Hackmac
   module Utils
     include FileUtils
 
-    def x(cmd, verbose: true, busy: nil)
+    def x(cmd, verbose: true)
       prompt = cmd =~ /\A\s*sudo/ ? ?# : ?$
       cmd_output = "#{prompt} #{cmd}".color(27) + (verbose ? "" : " >/dev/null".yellow)
       output, result = nil, nil
-      if busy
-        infobar.busy(label: busy) {
-          infobar.puts cmd_output
-          output = `#{cmd} 2>&1`
-          result = $?
-        }
-      else
-        infobar.puts cmd_output
-        output = `#{cmd} 2>&1`
-        result = $?
-      end
-      if verbose
-        infobar.puts output.italic
-      end
+      puts cmd_output
+      system "#{cmd} 2>&1"
+      result = $?
       if result.success?
-        infobar.puts "✅ Command succeded!".green
+        puts "✅ Command succeded!".green
       else
-        infobar.puts "⚠️  Command #{cmd.inspect} failed with exit status #{result.exitstatus}".on_red.white
+        puts "⚠️  Command #{cmd.inspect} failed with exit status #{result.exitstatus}".on_red.white
         exit result.exitstatus
       end
       output
