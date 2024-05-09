@@ -21,7 +21,7 @@ Gem::Specification.new do |s|
 
   s.specification_version = 4
 
-  s.add_development_dependency(%q<gem_hadar>.freeze, ["~> 1.12.0"])
+  s.add_development_dependency(%q<gem_hadar>.freeze, ["~> 1.15.0"])
   s.add_development_dependency(%q<debug>.freeze, [">= 0"])
   s.add_runtime_dependency(%q<tins>.freeze, ["~> 1.14"])
   s.add_runtime_dependency(%q<term-ansicolor>.freeze, ["~> 1.3"])
