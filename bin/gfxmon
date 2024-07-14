@@ -3,6 +3,7 @@
 require 'tins'
 include Tins::GO
 require 'term/ansicolor'
+Term::ANSIColor.true_coloring = ENV['COLORTERM'] =~ /\A(truecolor|24bit)\z/
 include Term::ANSIColor
 class String
   include Term::ANSIColor
