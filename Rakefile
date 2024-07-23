@@ -17,7 +17,7 @@ GemHadar do
   readme      'README.md'
 
   dependency  'tins',           '~>1.14'
-  dependency  'term-ansicolor', '~>1.3'
+  dependency  'term-ansicolor', '~>1.10'
   dependency  'complex_config'
   dependency  'amatch'
   dependency  'plist'
