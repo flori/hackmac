@@ -8,7 +8,7 @@ class Hackmac::Graph
       end
 
       def to_s
-        result = ''
+        result = +''
         result << ANSI.color(color)
         result << ANSI.on_color(on_color)
         styles.each { |s| result << ANSI.send(s) }
@@ -58,7 +58,7 @@ class Hackmac::Graph
     def -(old)
       dimensions != old.dimensions and raise ArgumentError,
         "old dimensions #{old.dimensions.inspect} don't match #{dimensions.inspect}"
-      result = ''
+      result = +''
       each.zip(old.each) do |(my, mx, me), (_, _, old)|
         if me != old
           result << ANSI.move_to(my, mx) << me.to_s
