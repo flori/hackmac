@@ -5,6 +5,11 @@
 Some ruby tools for working with a Hackintosh, which also might be (partially)
 useful an a regular Mac.
 
+HackMac is a set of Ruby tools specifically designed for managing and
+customizing Hackintosh configurations. While primarily intended for users with
+Hackintosh setups, it may also be useful for ordinary Mac users who want to
+leverage its features for monitoring system performance using `gfxmon`.
+
 ## Tools
 
  - `efi` is a tool to work with OpenCore EFI partitions, that is upgrading
@@ -15,7 +20,6 @@ useful an a regular Mac.
    that is temperature, clock rate, fan rotations, memory and power usage as
    provided by MacOS, see the screenshot:
    ![gfxmon Screenshot](./img/gfxmon.png "gfxmon Screenshot")
-
 
 ## Installation
 
@@ -44,7 +48,7 @@ in your shell.
 
 The homepage of this library is located at
 
-* https://github.com/flori/complex_config
+* https://github.com/flori/hackmac
 
 ## Author
 
