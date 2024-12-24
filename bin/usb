@@ -32,6 +32,5 @@ cd mountpoint_efi do
   x %{sudo chown $USER .}
   x %{git init}
   x %{git remote add origin #{$config.efi.source.inspect}}
-  x %{git pull origin master}
-  x %{git branch --set-upstream-to=origin/master}
+  x %{git pull origin --set-upstream #{($config.efi.source_branch? || 'master').inspect}}
 end
