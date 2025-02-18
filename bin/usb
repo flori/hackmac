@@ -4,9 +4,20 @@ require 'hackmac'
 include Hackmac
 include Utils
 
+def usage
+  puts <<~end
+
+    Usage #{File.basename($0)} [USB DEVICE]
+
+    Set HACKMAC_CONFIG to the config file, e. g. ~/.config/hackmac/foobar.yml
+
+  end
+  exit 1
+end
+
 $config = Hackmac::Config.load
 
-dev = ARGV.shift or fail "need usb device"
+dev = ARGV.shift or usage
 
 dev = File.basename(dev)
 
