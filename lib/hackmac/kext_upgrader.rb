@@ -19,7 +19,7 @@ module Hackmac
         case
         when kext.remote_version.nil?
           puts "No source defined for #{kext}"
-        when kext.remote_version > kext.version || @force
+        when (kext.remote_version > kext.version rescue false) || @force
           name, data = kext.remote_kext.download_asset
           if name
             File.secure_write(name, data)
