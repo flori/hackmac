@@ -1,6 +1,6 @@
 # Changes
 
-## 2025-02-18 v1.8.2
+## 2025-07-21 v1.8.2
 
 - Added a new `usage` method to provide help information when invalid arguments
   are encountered.
@@ -8,262 +8,489 @@
 
 ## 2025-02-18 v1.8.1
 
+- Updated `Hackmac::Kext_upgrader` to handle version comparison errors by
+  adding error handling for unconventional versions.
+- Improved the `git pull` command in the `usb` script to use the source branch
+  and set upstream correctly.
+- Unfroze empty strings in `Hackmac::Graph::Display` to allow modifications if
+  necessary.
+- Updated the README.md file to reflect the new HackMac project description and
+  correct the gem URL.
+- Updated the `hackmac.gemspec` file with newer RubyGems versions, including:
+  - Updated `s.date` from **2024-12-24** to **2025-02-18**
+  - Updated `s.rubygems_version` from **3.6.1** to **3.6.2**
+  - Bumped the `gem_hadar` development dependency to ~> **1.19**
 - Added error handling for version comparison in `Hackmac::Kext_upgrader` to
-  allow forcing for unconventional versions.
-- Improved `git pull` command in the USB bin script to use source branch and
-  set upstream, and removed obsolete `git branch` command.
-- Updated README to reflect the new `HackMac` project as a Ruby toolset for
-  managing and customizing Hackintosh configurations, and corrected the gem
-  URL.
+  allow forcing updates for unconventional versions.
 
 ## 2024-07-24 v1.8.0
 
-- Upgraded the `term-ansicolor` dependency to version **1.7.0**.
-- Enhanced the `bin/gfxmon` script to support true coloring when available in
-  the terminal.
-- Updated the `gem_hadar` dependency to version **2.3.4**.
+- Upgraded the `term-ansicolor` dependency from version **1.3** to **1.10**
+- Updated the `gem_hadar` development dependency to version **1.16.0**
+- Modified the `bin/gfxmon` script to enable true coloring when supported by
+  the terminal
 
 ## 2023-11-21 v1.7.2
 
-- Added functionality to download `assets` as requested in the commit message.
+- Added the `--downloadassets` flag to the `sudo #{cim.inspect}` command in the
+  `usb` script, enabling asset download during installation.
 
 ## 2023-11-19 v1.7.1
 
-- Improved compatibility with various `sudo` configurations to ensure
-  consistent behavior across different environments.
+- Removed the `infobar` gem dependency from the project.
+- Updated the version number to **1.7.1** in multiple files including
+  `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
+- Modified the `x` method in `lib/hackmac/utils.rb` to remove reliance on
+  `infobar` for displaying progress and status messages, instead using direct
+  `puts` calls.
+- Updated the `usb` script in `bin/usb` to simplify command execution by
+  removing the `busy` parameter from the `x` method calls.
 
 ## 2023-10-09 v1.7.0
 
-- Added a **busy** infobar that displays during calls to shell commands.
+- Added the `infobar` gem with version constraint `>=0.7.1` to display a busy
+  indicator during shell command execution.
+- Modified the `x` method in `lib/hackmac/utils.rb` to accept an optional
+  `busy` parameter, enabling the display of a progress indicator for
+  long-running commands.
+- Updated the version number from **1.6.1** to **1.7.0** across all relevant
+  files.
 
 ## 2023-09-04 v1.6.1
 
-- Improved color selection algorithm to use fewer bits.
-- Added support for `x-bit` functionality.
+- Improved color selection algorithm by using fewer bits in the
+  `Hackmac::Graph` class.
+- Added executable bit to the `bin/efi` script.
 
 ## 2023-05-29 v1.6.0
 
-- Improved the algorithm for deriving colors from title bits by mixing them
-  more effectively.
-- Added color display when listing metrics using the `-l` option.
-- Added comprehensive documentation and included a license file.
+- Added a new method `derive_color_from_string(string)` in the `Hackmac::Graph`
+  class to generate colors based on string input.
+- Modified the `list(ps)` function to sort metrics by name and display them
+  with colored text using ANSI color codes.
+- Updated the documentation and added a LICENSE file.
+- Added a screenshot of the gfxmon tool to the project's img directory.
 
 ## 2023-05-28 v1.5.1
 
-- Improved performance statistics retrieval by using `plist` output, replacing
-  the previous method of parsing the complex output of `ioreg`.
+- **Added** `Hackmac::IOReg` class to handle fetching and parsing of IORegistry
+  data using `plist` output instead of parsing the raw output of `ioreg`.
+- **Updated** `gfxmon` script to use `Hackmac::IOReg.new(key:
+  'PerformanceStatistics').as_hash` for fetching performance statistics,
+  replacing the previous method that parsed `ioreg` output.
+- **Added** dependency on `hashie` gem to support deep finding in hashes within
+  the `IOReg` class.
+- **Updated** version number from **1.5.0** to **1.5.1** across all relevant
+  files.
 
 ## 2023-05-28 v1.5.0
 
-- Optimized performance by improving the efficiency of certain operations.
+- Optimized performance by modifying the `Hackmac::Graph` class:
+  - Changed variable initialization from `i = 0` to `@counter = -1`
+  - Added `@start = Time.now` for timing purposes
+  - Modified sleep duration calculation in `sleep_now` method
+  - Improved display diff handling with additional debug logging when
+    `ENV['DEBUG_BYTESIZE']` is set
+- Updated ANSI color application logic in `Hackmac::Graph::Display` class to
+  use string concatenation instead of nested blocks
 
 ## 2023-05-28 v1.4.2
 
-- Improved the naming of variables in the configuration file to enhance clarity
-  and maintainability.
+- Improved variable naming in the config file
+- Updated version number to **1.4.2**
+- Added color output for config loading messages using `Term::ANSIColor`
+- Modified config path environment variable from `CONFIG_PATH` to
+  `HACKMAC_CONFIG`
+- Added exit status handling for failed commands in utils
 
 ## 2023-05-28 v1.4.1
 
-- Improved the formatting and clarity of command outputs for better user
-  experience.
+- Improved command output formatting in the `x` method of `Hackmac::Utils`
+  - Added emoji indicators for command success (`✅`) and failure (`⚠️`)
+  - Changed command prompt color based on whether `sudo` is used
+  - Simplified verbose output handling
 
 ## 2023-05-28 v1.4.0
 
-- Improved performance of graph display to avoid flickering.
-- Extracted formatters into their own module.
+- Improved performance of graph display to reduce flickering.
+- Modified the `-g` option to `-m` in `gfxmon` for specifying performance
+  metrics.
+- Added a new method `choose_metric` that now uses `$opts[?m]` instead of
+  `$opts[?g]`.
+- Introduced a new module `Hackmac::Graph::Formatters` to handle different
+  value formatting (e.g., bytes, hertz, celsius, percent).
+- Refactored the graph implementation to use a new `Hackmac::Graph::Display`
+  class for better management of terminal output.
+- Added support for mutex synchronization in graph updates to prevent display
+  issues during resizing or concurrent operations.
+- Enhanced error handling and argument validation (e.g., ensuring sleep
+  duration is non-negative).
 
 ## 2023-05-27 v1.3.0
 
-- **Refactored** the `graph` functionality into a proper `Graph` class,
-  enhancing code structure and maintainability.
+- Refactored the graph implementation from a hack to a proper `Hackmac::Graph`
+  class.
+- Added new methods and functionality:
+  - `derive_formatter` method for determining value formatting based on metric
+    type.
+  - Various formatting methods: `as_bytes`, `as_hertz`, `as_celsius`,
+    `as_percent`, and `as_default`.
+  - Improved graph rendering with better color handling, data processing, and
+    window resizing support.
+- Updated the gemspec to include the new `graph.rb` file.
+- Removed the old `format_bytes` method in favor of the new class-based
+  approach.
 
 ## 2023-05-15 v1.2.1
 
-- Added an additional check for `installer` existence to ensure proper
-  validation before proceeding with installation.
-- Implemented a new mechanism to set the `upstream` source, enhancing
-  dependency management and ensuring accurate package retrieval.
+- Added an additional check for the existence of `createinstallmedia` at
+  `#{$config.usb.os}/Contents/Resources/createinstallmedia`.
+- Updated version numbers to **1.2.1** in `VERSION`, `hackmac.gemspec`, and
+  `lib/hackmac/version.rb`.
+- Modified the USB installation script to verify the presence of the macOS
+  installer before proceeding.
+- Added a step to set the upstream branch for Git operations during EFI setup.
 
 ## 2023-04-23 v1.2.0
 
-- Added logic to set the `upstream` variable and check for the existence of an
-  installer.
+- Added a check to verify if the installer exists before proceeding with
+  installation. If the installer is not found, an error message is displayed.
+- Modified the EFI setup process by adding `git branch
+  --set-upstream-to=origin/master` to set the upstream branch for the local Git
+  repository.
+
+Version numbers updated:
+- **1.2.0**
 
 ## 2023-02-18 v1.1.3
 
-- Extracted sample/default configuration into a separate file.
-- Simplified code by removing redundant logic related to "dreaded mounting".
+- Extracted the sample/default configuration into a new file `hackmac.yml` to
+  improve maintainability and organization.
+- Simplified the USB mounting process by dynamically determining mountpoints
+  based on configuration values, reducing manual checks for existing mounts.
 
 ## 2022-10-06 v1.1.2
 
-- Captured `stderr` for commands and included it as output
-- Replaced `byebug` with `debug`
-- Added `CONFIG_PATH` to help information
+- Captured stderr for commands by modifying the `x` method in
+  `lib/hackmac/utils.rb` to include `2>&1`.
+- Updated development dependency from `byebug` to `debug` in `Rakefile` and
+  `hackmac.gemspec`.
+- Added help information about setting `CONFIG_PATH` in `bin/efi`.
 
 ## 2022-07-12 v1.1.1
 
-- Modified the `basename` method to extract the device name from a given path.
-- Converted the device path handling to use the `basename` method for
-  consistency and clarity.
+- Updated the version number to **1.1.1** in `VERSION`, `hackmac.gemspec`, and
+  `lib/hackmac/version.rb`.
+- Modified the `usb` script to use `File.basename(dev)` when processing the
+  device argument.
 
 ## 2022-05-26 v1.1.0
 
-- Added a new validator for `config.plist` specifically designed to work with
-  **OpenCore**.
+- Added a new command `oc_validate` to the `efi` tool for validating OpenCore's
+  config.plist.
+- Added a new class `OCValidator` in `lib/hackmac/oc_validator.rb` to handle
+  OpenCore validation logic.
+- Updated the gem version from **1.0.5** to **1.1.0**.
+- Updated the list of files and documentation in the gemspec to include the new
+  validator class.
 
 ## 2022-05-26 v1.0.5
 
-- Added the `root` path to the application.
+- Added the root path `/` to the USB creation process.
+- Updated version number from **1.0.4** to **1.0.5** in multiple files
+  including `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
 
 ## 2022-05-26 v1.0.4
 
-- Added support for Ruby `v2.5` and updated dependencies to their latest
-  versions.
-- Fixed an issue where the `config/initializers/session_store.rb` file was not
-  being properly recognized when using `bin/dev`.
-- Enhanced error handling by introducing a new method `handle_error` in the
-  `ErrorHandler` class, which provides more detailed logging and user feedback.
-- Improved performance by optimizing the database query execution time for the
-  `User.search` method.
-- Added a new feature to support multi-factor authentication (MFA) with the
-  introduction of the `mfa_enabled?` method in the `User` model.
+- Added `sudo chown $USER .` to change ownership of the EFI directory in the
+  `usb` script.
+- Reordered commands in the `usb` script, moving the creation of the
+  installation media to before mounting the EFI partition.
 
 ## 2022-05-26 v1.0.3
 
-- Changed the execution order of commands in the `usb` configuration.
+- Changed the order of commands in the `usb` script.
+- Updated version numbers to **1.0.3** across various files including
+  `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
+- Removed redundant execution of the command `sudo
+  "#{$config.usb.os}/Contents/Resources/createinstallmedia" --volume
+  #{mountpoint.inspect} --nointeraction` in the `usb` script.
 
 ## 2022-05-26 v1.0.2
 
-- Converted the output of `#to_s` method to a string format.
+- Updated the version number from **1.0.1** to **1.0.2** in multiple files.
+- Modified the `File.secure_write` method call in `lib/hackmac/config.rb` to
+  use `path.to_s` instead of `path`.
 
 ## 2022-05-26 v1.0.1
 
-- Upgraded the `default` configuration to improve functionality and user
-  experience.
+- Upgraded the default configuration with several changes:
+  - Updated `efi.source` to `'storage.gate.ping.de:/git/EFI-hacmaxi.git'`
+  - Changed `usb.os` to `/Applications/Install macOS Monterey.app`
+  - Modified `oc.efi_path` to `'EFI'`
+  - Added new configuration under `oc.files` including:
+    - `'BOOT/BOOTx64.efi'`
+    - `'OC/OpenCore.efi'`
+    - `'OC/Drivers/OpenHfsPlus.efi'`
+    - `'OC/Drivers/OpenRuntime.efi'`
+    - `'OC/Tools/OpenShell.efi'`
+  - Updated `kext.efi_path` to `'EFI/OC/Kexts'`
+  - Added new kext source for `LucyRTL8125Ethernet` with github repository
+    `'Mieze/LucyRTL8125Ethernet'`
 
 ## 2022-05-26 v1.0.0
 
-- Moved from Clover to OpenCore as the boot loader.
-- Removed support for specifying a boot device.
-- Added support for multiple configuration paths via the environment variable
-  `CONFIG_PATH`.
+- Added support for OpenCore with new commands `oc`, `oc_remote`, and
+  `oc_upgrade`  
+  - Commands added to `bin/efi` script  
+  - New classes `Hackmac::OC` and `Hackmac::OCUpgrader` implemented  
+- Removed Clover-related functionality  
+- Version bumped from **0.8.3** to **1.0.0**  
+- Refactored asset download logic with new module `Hackmac::AssetTools`  
+  - Moved decompression logic to shared module  
+- Renamed classes for clarity:  
+  - `KextSource` → `GithubSource`  
+  - `KextDownload` → `URLDownload`  
+- Removed support for boot device management  
+  - Removed `list` command from `bin/efi`  
+  - Removed `boot_dev` method and related functionality  
+- Updated dependencies in `hackmac.gemspec`  
+  - Updated `gem_hadar` dependency to **~> 1.12.0**  
+  - Updated RubyGems version to **3.3.13**
 
 ## 2021-03-05 v0.8.3
 
-- Updated dependency to use `acidanthera` release of `BrcmPatchRAM` instead of
-  `RehabMan's` version.
+- Updated the `BrcmPatchRAM` configuration to use Acidanthera's release instead
+  of RehabMan's.
 
 ## 2020-12-13 v0.8.2
 
-- Modified behavior to use an **expanded path** when operating on the **EFI
-  partition**, enhancing compatibility and functionality in such environments.
+- Added `require 'pathname'` to the list of required libraries in `hackmac.rb`.
+- Updated version number from **0.8.1** to **0.8.2** across multiple files.
+- Modified the `kext` and `kext_upgrade` commands in `efi` script to use
+  expanded paths by converting the input path using
+  `Pathname.new(path).expand_path.to_s`.
 
 ## 2020-08-22 v0.8.1
 
-- Modified handling of `bdmesg` output to accommodate recent changes in its
-  format.
+- Updated the regular expression in `boot_dev` method to handle both `\r` and
+  `\n` line endings.
+- Bumped version from **0.8.0** to **0.8.1** across all relevant files.
 
 ## 2020-08-17 v0.8.0
 
-- Added `aliases` to the list of EFI partitions.
+- Added support for aliases in the list of EFI partitions, allowing users to
+  map device names to their corresponding identifiers.
+- Updated the configuration file with new default values and added
+  documentation for clarity.
+- Modified the `efi` command to display alias information when listing EFI
+  partitions.
 
 ## 2020-08-14 v0.7.0
 
-- Added support for downloading **kexts** that are not yet released on GitHub.
-- Moved the configuration file from `~/config/hackmac.yml` to the more
-  standardized location `~/.config/hackmac/hackmac.yml`.
-- Enhanced decompression capabilities by adding support for `.tar.gz` files in
+- Moved configuration file from `~/config/hackmac.yml` to
+  `~/.config/hackmac/hackmac.yml`.
+- Added support for downloading kexts that are not released.
+- Updated the decompression functionality to handle both `.zip` and `.tar.gz`
+  files.
+- Modified the `KextSource` class to allow decompressing of `.tar.gz` files in
   addition to `.zip`.
+- Created a new `KextDownload` class to handle downloading kexts from specified
+  URLs.
 
 ## 2020-05-15 v0.6.2
 
-- Improved the caching mechanism for `diff` operations to enhance performance
-  and reduce redundant computations.
+- Added `--cached` option to the `git_args` method in the `efi` script,
+  enhancing diff functionality.
 
 ## 2020-05-13 v0.6.1
 
-- Added all files in the `EFI` directory.
+- Added `git add -A` before committing in the `commit` command of the `efi`
+  script to ensure all changes are staged.
+- Updated version numbers from **0.6.0** to **0.6.1** across multiple files
+  including `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
+- Reformatted code in several parts of the `efi` script for better readability,
+  such as splitting long lines into multiple lines and improving indentation.
+- Modified the `diff` command in the `efi` script to include all changes by
+  using `git add -A` before generating the diff.
 
 ## 2020-05-05 v0.6.0
 
-- Added support for installing debug kexts.
-- Enhanced documentation by adding usage information.
+- Added support for installing debug kexts by introducing a `force` parameter
+  in the `kext_upgrade` command.
+- Updated the version number from **0.5.0** to **0.6.0** across all relevant
+  files.
+- Modified the `KextSource` class to include a `suffix` parameter, allowing for
+  differentiation between debug and release builds.
+- Enhanced the `efi` script with new commands: `diff` and `commit`, which
+  enable diffing changes and committing them using git on the EFI partition.
 
 ## 2020-03-05 v0.5.0
 
-- Added support for the `efi` Git repository.
+- Added support for EFI Git repository operations
+  - Implemented `git_args` method to handle command line arguments
+  - Added new commands: 
+    - `diff`: Runs `git diff` on mounted EFI volume with default args `--color
+      --stat`
+    - `commit`: Commits changes and pushes to remote with default arg `-v`
+- Updated version number from **0.4.2** to **0.5.0**
+- Added `Shellwords` require in utils module
+- Updated copyright date to 2020-03-05
 
 ## 2020-02-13 v0.4.2
 
-- Fixed a crash that occurred when no plugins were available.
-- Replaced direct file operations with the `File` class for better abstraction
-  and maintainability.
+- **0.4.2**: Fixed a crash that could occur when no plugins were available by
+  modifying the condition in `Hackmac::KextUpgrader`.
+- Improved code clarity by replacing `FileTest.directory?` with
+  `File.directory?` in `Hackmac::KextUpgrader`.
 
 ## 2020-02-13 v0.4.1
 
-- Upgraded plugins if they are defined in the configuration.
+- Added support for upgrading plugins alongside kexts by introducing the
+  `Hackmac::KextUpgrader` class.
+- Updated the `kext_upgrade` command to use the new `KextUpgrader` instead of
+  inline code, improving maintainability and readability.
+- Modified the configuration file to include plugin definitions under each
+  kext's source configuration.
+- Removed redundant code from the `bin/efi` script by extracting the upgrade
+  logic into a dedicated class.
+- Added support for handling multiple kexts and their associated plugins during
+  the upgrade process.
 
 ## 2020-02-11 v0.4.0
 
-- Added dependency on the `search_ui` gem.
-- Implemented changes to ensure non-negativity of values.
+- Added dependency to the `search_ui` gem.
+- Removed local implementation of `Hackmac::SearchUI` in favor of using the
+  `search_ui` gem.
+- Updated version number from **0.3.4** to **0.4.0**.
+- Modified code to use `Search.new` instead of `SearchUI.new` when initializing
+  search functionality.
 
 ## 2020-02-07 v0.3.4
 
-- Added the `path` attribute to the `kexts` list, enhancing the visibility of
-  kernel extension paths.
+- Added a new column `:path` to the table display in the `kexts` command.
+- Modified the `Kext` class to store and expose the `:path` attribute.
+- Updated version numbers across files to **0.3.4**.
 
 ## 2020-02-07 v0.3.3
 
-- Improved handling of kernel extension (kext) archives that contain
-  **subdirectories**.
+- Added support for handling kext archives with subdirectories in the
+  `kext_upgrade` command.
+- Added a new development dependency: `byebug`.
+- Improved error handling when unzipping kext archives by adding a failure
+  check after the unzip operation.
 
 ## 2020-01-30 v0.3.2
 
-- Improved handling of case sensitivity for user inputs.
+- Modified the regular expression in `Hackmac::KextSource#download_asset` to be
+  case-insensitive when matching asset names, allowing for different casing of
+  the word "RELEASE".
 
 ## 2020-01-30 v0.3.1
 
-- Fixed some inaccuracies in the documentation and code comments.
+- Updated the version number to **0.3.1** in multiple files including
+  `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
+- Modified the kext upgrade process in `bin/efi`:
+  - Added a check for `name` before proceeding with file operations.
+  - Improved error handling by adding failure messages when the kext could not
+    be installed or downloaded.
+  - Changed the prompt message to include the target path and version.
+- Updated the configuration file `lib/hackmac/config.rb`:
+  - Renamed the device key from `boot` to `main`.
 
 ## 2020-01-30 v0.3.0
 
-- Added support for the `usb` command, enabling interaction with USB devices.
+- Added the `usb` command to create a bootable USB drive for Hackintosh
+  installations.
+- Updated the gem specification and version files to reflect the new version
+  **0.3.0**.
+- Modified the `hackmac.gemspec` file to include the new `usb` executable and
+  updated the list of files and extra documentation files.
+- Added a new module `Hackmac::Utils` containing utility functions for command
+  execution and user interaction, consolidating code previously present in
+  individual scripts.
+- Updated the default configuration in `lib/hackmac/config.rb` to include new
+  keys for EFI source and USB OS installation media paths.
+- Removed redundant code from the `bin/efi` script by including the `Utils`
+  module instead of duplicating utility functions.
 
 ## 2020-01-29 v0.2.1
 
-- Skipped `UUID` to reduce table width.
+- Removed the `DiskUUID` column from the table display in the `list` command to
+  reduce table width.
 
 ## 2020-01-29 v0.2.0
 
-- Added functionality to `automatically upgrade` kernel extensions (kexts)
-  directly from GitHub.
+- Added a new `kext_upgrade` command to upgrade kexts from their GitHub sources
+- Updated the `clone` method to use an `ask` helper function for prompts
+- Added support for downloading and installing kext upgrades in a temporary
+  directory
+- Improved the `KextSource` class with:
+  - Better handling of GitHub authentication
+  - Added `download_asset` method to download release assets
+  - Enhanced version parsing logic
+- Updated various dependencies and internal utilities
 
 ## 2020-01-28 v0.1.1
 
-- Updated to use the `new API` for enhanced functionality and compatibility.
+- Updated the `hackmac` gem version from **0.1.0** to **0.1.1**
+- Modified the `usage` method in `bin/efi` to use `boot_dev` instead of `dev`
+- Changed the way disks are processed in `bin/efi`, using
+  `disks.AllDisksAndPartitions` instead of accessing via hash
+- Updated methods in `lib/hackmac/kext.rb` to use new API calls like
+  `CFBundleIdentifier()`, `CFBundleName()`, and `CFBundleShortVersionString()`
+  instead of direct hash access
 
 ## 2020-01-28 v0.1.0
 
-- Improved the use of the `config` file for better configuration handling.
-- Enhanced the `output` generation to provide more informative results.
+- Added support for a configuration file to store device mappings and kext
+  sources.
+- Updated the `kexts` command to use the new configuration and display results
+  in a formatted table using `Tabulo`.
+- Changed the `boot` command to `list` which now displays boot disk information
+  in a more structured format with tables.
+- Added support for GitHub authentication when fetching remote kext versions.
+- Improved error handling and version comparison logic for kexts.
+- Added new dependencies: `complex_config` and `tabulo`.
+- Updated the gemspec to include new files and updated version numbers.
 
 ## 2020-01-15 v0.0.4
 
-- Read files using the `UTF-8` encoding to ensure proper handling of text data.
+- Added support for listing version info of kexts via the `kext` command, which
+  takes a `PATH` argument.
+- Updated the `kexts` command to display the EFI device used in the output.
+- Modified the `mount` and `unmount` commands with TODO notes for future
+  symlink management.
+- Changed file reading in `lib/hackmac/kext.rb` to use UTF-8 encoding.
+- Bumped version from **0.0.3** to **0.0.4** across all files.
 
 ## 2020-01-13 v0.0.3
 
-- Added functionality to display the `kext` version and list all available
-  `kext`s.
+- Added the ability to display the kext version and all kexts
+- Updated the command from `kext` to `kexts`
+- Modified the help message for the `kexts` command
+- Added a new `kext` command that takes an app directory as input
 
 ## 2020-01-13 v0.0.2
 
-- Made the `device` configuration option configurable.
+- Made the device configurable in the `efi` script by allowing it to accept a
+  custom mount point via command line arguments.
+- Updated the version number from **0.0.1** to **0.0.2** across all relevant
+  files including `VERSION`, `hackmac.gemspec`, and `lib/hackmac/version.rb`.
+- Modified the date in the gem specification file to reflect the latest commit
+  date of 2020-01-13.
 
 ## 2020-01-06 v0.0.1
 
-No significant changes to summarize.
+- Added a `boot` command to the `efi` tool that shows boot disk information,
+  specifically which EFI partition was used.
+- Updated the `help` command in the `efi` tool to include detailed usage
+  instructions for all available commands: `mount`, `unmount`, `clone`, `kext`,
+  and `boot`.
+- Bumped the version number from **0.0.0** to **0.0.1** across all relevant
+  files.
+- Updated the gemspec file to reflect the new version **0.0.1**, updated the
+  date, and adjusted RubyGems version compatibility.
 
 ## 2019-12-18 v0.0.0
 
