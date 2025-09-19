@@ -1,5 +1,17 @@
 # Changes
 
+## 2025-09-19 v1.8.3
+
+- Enhanced README with improved formatting and detailed tool descriptions
+- Added better error handling in `kexts` command with `Errno::ENOENT` rescue
+- Updated `gem_hadar` development dependency from version **1.20** to **2.6**
+- Included `s.licenses = ["MIT".freeze]` in `hackmac.gemspec` and added `MIT`
+  license to gem specification
+- Added `.gitignore` and `.contexts` to `package_ignore` list in `Rakefile`
+- Updated print call syntax to use explicit parentheses
+- Added `.context/code_comment.rb` to `hackmac.gemspec` and configured it for
+  code comment context
+
 ## 2025-07-21 v1.8.2
 
 - Added a new `usage` method to provide help information when invalid arguments
