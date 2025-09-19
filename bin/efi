@@ -1,9 +1,41 @@
 #!/usr/bin/env ruby
+#
+# Hackmac EFI Management Tool
+#
+# This script provides comprehensive management capabilities for OpenCore EFI
+# partitions including mounting/unmounting, cloning, kext management, OpenCore
+# upgrades, and git operations.
+#
+# Features:
+#
+# - Mount/Unmount EFI partitions
+# - Clone EFI partitions between devices
+# - Manage kernel extensions (kexts) and their versions
+# - Upgrade OpenCore bootloader to latest versions
+# - Validate OpenCore configurations
+# - Git integration for tracking EFI changes
+#
+# Usage: efi [command] [arguments]
+# Run without arguments to see full help and available commands
+#
+# Configuration:
+# Set HACKMAC_CONFIG to specify a custom config file path
+# Defaults to ~/.config/hackmac/hackmac.yml
 
 require 'hackmac'
 include Hackmac
 include Utils
 
+# The clone method performs a disk cloning operation between two volumes
+#
+# This method facilitates the cloning of data from one disk volume to another
+# by first prompting the user for confirmation, then mounting both volumes,
+# performing a dry-run of the rsync operation to show what would be copied, and
+# finally executing the actual copy with deletion of extraneous files.
+#
+# @param from [ String ] the source disk identifier to clone from
+# @param to [ String ] the target disk identifier to clone to
+# @return [ void ] Returns nothing but performs system disk cloning operations
 def clone(from:, to:)
   ask("Cloning from #{from} to #{to} now? (y/n) ") or return
   x %{sudo mkdir -v "/Volumes/#{from}"}
@@ -18,10 +50,18 @@ def clone(from:, to:)
   x %{rsync -av --exclude ".*" --delete "/Volumes/#{from}/" "/Volumes/#{to}/"}
 end
 
+# The usage method displays help information and command usage instructions
+#
+# This method outputs a formatted help message that describes the available
+# commands and their arguments for the Hackmac tool. It provides default device
+# names
+# and explains how to configure the tool using environment variables.
+#
+# @return [ void ] Returns nothing but prints usage information to standard output
 def usage
   default_dev = device_name('main')
 
-  puts <<~end
+  puts <<~EOT
 
     Usage #{File.basename($0)} [command] [arguments]
 
@@ -88,11 +128,21 @@ def usage
         Commits changes with git, passes arguments to commit command
         after "--".
 
-  end
+  EOT
 end
 
-$config = Hackmac::Config.load
-
+# The device_name method determines the appropriate device name based on the
+# provided mount device identifier
+#
+# This method retrieves the device name by checking if a mount device
+# identifier is provided. If no identifier is given, it returns the main device
+# name from the configuration. If an identifier is provided, it looks up the
+# corresponding device in the configuration and returns its name, falling back
+# to the original identifier if not found
+#
+# @param mdev [ String, nil ] the mount device identifier to look up, or nil to use the main device
+#
+# @return [ String ] the resolved device name from configuration or the original identifier
 def device_name(mdev)
   case mdev
   when nil
@@ -106,6 +156,16 @@ def device_name(mdev)
   end
 end
 
+# The git_args method processes command line arguments to determine the device
+# name and default git arguments
+#
+# This method handles the parsing of command line arguments for git operations,
+# identifying whether a device name is provided and managing the default
+# arguments that should be used when none are specified
+#
+# @param default [ Array<String> ] the default git arguments to use when none are provided
+#
+# @return [ String ] the device name determined from the command line arguments
 def git_args(default:)
   mdev =
     if ARGV.first == '--'
@@ -120,22 +180,19 @@ def git_args(default:)
   mdev
 end
 
+$config = Hackmac::Config.load
+
 bold_head = -> h { h.sub(/\A[a-z]/) { $&.upcase }.bold }
 
 case command = ARGV.shift
 when 'help', nil
   usage
 when 'mount'
-  #if File.exist?('/Volumes/EFI')
-  #  raise "/Volumes/EFI already exists => Sort this out first."
-  #end
   mdev = device_name(ARGV.shift)
   x %{sudo diskutil mount "#{mdev}"}
-  # TODO symlink to /Volumes/mdev, mdev should be foo['MountPoint'] from efi boot
 when /\Aun?mount\z/
   mdev = device_name(ARGV.shift)
   x %{sudo diskutil unmount "#{mdev}"}
-  # TODO remove /Volumes/mdev if it is a symlink
 when /\Adiff\z/
   mdev = git_args(default: %w[ --color --stat --cached ])
   x %{sudo diskutil mount "#{mdev}"}
@@ -161,9 +218,11 @@ when 'clone'
 when 'kexts'
   mdev = device_name(ARGV.shift)
   x %{sudo diskutil mount "#{mdev}"}
-  on_efi = Dir["/Volumes/#{mdev}/#{$config.kext.efi_path}/*.kext"].map { |path|
+  on_efi = Dir["/Volumes/#{mdev}/#{$config.kext.efi_path}/*.kext"].map do |path|
     Kext.new(path: path, config: $config)
-  }.sort_by(&:name)
+  rescue Errno::ENOENT
+    warn  "#{path.to_s.inspect} has no info => Skipping."
+  end.compact.sort_by(&:name)
   puts 'EFI'.yellow.bold + " (#{mdev})".bold
   puts Tabulo::Table.new(on_efi, align_header: :left, border: :modern) { |t|
     t.add_column(:name, header_styler: bold_head)

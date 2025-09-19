@@ -1,4 +1,23 @@
 #!/usr/bin/env ruby
+#
+# GPU Performance Monitor
+#
+# A terminal-based tool for monitoring and visualizing GPU performance metrics
+# in real-time. Displays system hardware statistics including temperature,
+# clock speeds, memory usage, and power consumption with graphical
+# representations.
+#
+# Features:
+# - Real-time monitoring with customizable update intervals
+# - Color-coded visualizations using ANSI terminal graphics
+# - Support for multiple metric types (bytes, hertz, celsius, percentage)
+# - Interactive search for performance metrics
+# - JSON output support for integration with other tools
+#
+# Example:
+#   gfxmon                     # Real-time graph with metrics
+#   gfxmon -n 3                # Update every 3 seconds
+#   gfxmon -m "Temperature(C)" # Show specific metric
 
 require 'tins'
 include Tins::GO
@@ -16,8 +35,15 @@ include SearchUI
 
 $opts = go 'c:m:n:jlh', defaults: { ?s => true, ?n => 5 }
 
+# The usage method displays command-line usage information and options
+#
+# This method prints a formatted help message to the standard output that
+# describes how to use the command-line tool, including available options
+# and their descriptions for controlling GPU performance data output
+#
+# @return [ Integer ] always returns 0 to indicate successful help display
 def usage
-  puts <<~end
+  puts <<~EOT
   Usage: #{File.basename($0)} [OPTIONS]
 
     OPTIONS are
@@ -29,14 +55,30 @@ def usage
       -m METRIC   output graph for performance METRIC
       -c COLOR    output graph in this terminal COLOR (between 0 - 255)
 
-  end
+  EOT
   0
 end
 
+# The ps method retrieves performance statistics from the IORegistry
+#
+# This method accesses the PerformanceStatistics key in the IORegistry
+# to obtain detailed hardware performance data and returns it as a hash
+#
+# @return [ Hash ] a hash containing the performance statistics data from the
+#   IORegistry
 def ps
   Hackmac::IOReg.new(key: 'PerformanceStatistics').as_hash
 end
 
+# The list method displays a formatted key-value pair listing with colored
+# output
+#
+# This method takes a hash of key-value pairs and formats them for display in
+# the terminal, applying color coding to the keys and formatting the values
+# according to derived formatters. It sorts the entries by key before
+# displaying them.
+#
+# @param ps [ Hash ] a hash containing string keys and numeric or string values to be displayed
 def list(ps)
   max = ps.keys.max_by(&:size)&.size&.to_i
   include Hackmac::Graph::Formatters
@@ -46,6 +88,21 @@ def list(ps)
   }
 end
 
+# The choose_metric method selects a metric from a provided hash based on user
+# input or configuration
+#
+# This method attempts to determine the appropriate metric to use by first
+# checking for a configured metric in the global options. If no metric is
+# configured, it prompts the user to select from available metrics using an
+# interactive search interface. The method validates that the selected metric
+# exists in the provided hash and raises an error if the metric is not
+# recognized.
+#
+# @param ps [ Hash ] a hash containing available metric names as keys
+#
+# @return [ String ] the name of the selected metric
+#
+# @raise [ RuntimeError ] if the specified metric is not found in the provided hash
 def choose_metric(ps)
   case metric = $opts[?m]
   when nil
@@ -73,6 +130,16 @@ def choose_metric(ps)
   fail "Metric #{metric} not known"
 end
 
+# The derive_formatter method maps a metric string to an appropriate formatting
+# method symbol
+#
+# This method takes a metric identifier string and determines the corresponding
+# formatting strategy by matching against common metric patterns such as bytes,
+# hertz, celsius, and percentage values
+#
+# @param metric [ String ] the metric identifier to derive formatting from
+#
+# @return [ Symbol ] the appropriate formatter method symbol for the given metric
 def derive_formatter(metric)
   case metric
   when /bytes/i
@@ -88,6 +155,18 @@ def derive_formatter(metric)
   end
 end
 
+# The display_graph method creates and starts a graphical representation of
+# system metrics
+#
+# This method initializes a graph visualization based on selected system
+# metrics, configuring the display with appropriate formatting, color settings,
+# and update intervals before beginning the continuous rendering process
+#
+# @return [ void ] Returns nothing but initiates the graphical display loop for system metrics
+#
+# @see Hackmac::Graph
+# @see choose_metric
+# @see derive_formatter
 def display_graph
   if metric = choose_metric(ps)
     sleep_duration = [ 1, ($opts[?n] || 10).to_i ].max

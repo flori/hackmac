@@ -1,17 +1,41 @@
 #!/usr/bin/env ruby
+#
+# USB Installer Script
+#
+# This script prepares a USB drive for macOS installation by:
+# - Formatting the USB device with GPT partition scheme
+# - Creating a bootable installer using Apple's createinstallmedia tool
+# - Mounting the EFI partition and initializing a git repository
+#
+# Example: usb /dev/disk2
+#
+# Requirements:
+# - USB device must be at least 16GB
+# - macOS installer package must be present in config
+# - User must have administrator privileges
+#
+# Environment Variables:
+#   HACKMAC_CONFIG - Path to configuration file (default: ~/.config/hackmac/config.yml)
+#
+# This script performs destructive operations and should be used with caution.
 
 require 'hackmac'
 include Hackmac
 include Utils
 
+# The usage method displays help information and exits the program
+#
+# This method prints a usage message to the standard output that includes
+# the command name and available options, then terminates execution with
+# a status code of 1
 def usage
-  puts <<~end
+  puts <<~EOT
 
     Usage #{File.basename($0)} [USB DEVICE]
 
     Set HACKMAC_CONFIG to the config file, e. g. ~/.config/hackmac/foobar.yml
 
-  end
+  EOT
   exit 1
 end
 
