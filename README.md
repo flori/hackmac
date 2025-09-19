@@ -1,59 +1,105 @@
-# HackMac
+# HackMac 🚀
 
-## Description
-
-Some ruby tools for working with a Hackintosh, which also might be (partially)
-useful an a regular Mac.
+## Description 📝
 
 HackMac is a set of Ruby tools specifically designed for managing and
 customizing Hackintosh configurations. While primarily intended for users with
 Hackintosh setups, it may also be useful for ordinary Mac users who want to
 leverage its features for monitoring system performance using `gfxmon`.
 
-## Tools
+## Tools 🛠️
 
- - `efi` is a tool to work with OpenCore EFI partitions, that is upgrading
-   OpenCore and Kexts and commiting to its git repository.
- - `usb` can be used to create a bootable USB containing a MacOs release and
-   uses an EFI partition cloned from a git repository.
- - `gfxmon` dispays performance statistics for your AMD GPU in the terminal,
-   that is temperature, clock rate, fan rotations, memory and power usage as
-   provided by MacOS, see the screenshot:
-   ![gfxmon Screenshot](./img/gfxmon.png "gfxmon Screenshot")
+### `efi` - EFI Partition Management 📁
+Manage OpenCore EFI partitions including:
+- Upgrading OpenCore and kernel extensions (kexts) 🔧
+- Committing changes to git repositories 💾
+- Mounting/unmounting EFI volumes 📌
+- Cloning EFI partitions between devices 🔄
 
-## Installation
+### `usb` - Bootable USB Creator 🖥️
+Create bootable USB drives for macOS installation with:
+- Format USB device with GPT partition scheme 📊
+- Create bootable installer using Apple's `createinstallmedia` ⚡
+- Initialize git repository on EFI partition 📦
 
-You can use rubygems to fetch the gem and install it for you:
+### `gfxmon` - GPU Performance Monitor 🎮
+Display real-time performance statistics for your GPU in the terminal including:
+- Temperature, clock rates, fan rotations 🌡️
+- Memory usage and power consumption ⚡
+- Color-coded visualizations with ANSI terminal graphics 🎨
 
-    # gem install hackmac
+![gfxmon Screenshot](./img/gfxmon.png "gfxmon Screenshot")
 
-You can also put this line into your Gemfile
+## Installation 📦
 
-    gem 'hackmac'
-
-# Configuration
-
-First start `efi` without arguments this will display the available commands,
-but also initializes a default configuration file in
-`~/.config/hackmac/hackmac.yml` to get you started. If you want work with
-multiple configuration files you can change the path by setting
-
-```
-$ export HACKMAC_CONFIG=~/config/hackmac/other.yml
+### Using RubyGems 💎
+```bash
+gem install hackmac
 ```
 
-in your shell.
+### Using Bundler 📦
+Add to your Gemfile:
+```ruby
+gem 'hackmac'
+```
 
-## Download
+## Configuration ⚙️
 
-The homepage of this library is located at
+First run `efi` without arguments to display available commands and initialize
+the default configuration file at:
+```
+~/.config/hackmac/hackmac.yml
+```
 
-* https://github.com/flori/hackmac
+To use a custom configuration file, set the environment variable:
+```bash
+export HACKMAC_CONFIG=~/config/hackmac/other.yml
+```
 
-## Author
+## Usage Examples 🎯
+
+### EFI Management 📁
+```bash
+# Mount EFI partition
+efi mount
+
+# Clone EFI partitions
+efi clone /dev/disk0s1 /dev/disk1s1
+
+# Upgrade OpenCore
+efi oc_upgrade
+
+# Show kext versions
+efi kexts
+```
+
+### GPU Monitoring 🎮
+```bash
+# Real-time monitoring with 2-second updates
+gfxmon -n 2
+
+# Monitor specific metric
+gfxmon -m "Temperature(C)"
+
+# Output as JSON for scripting
+gfxmon -j
+```
+
+### USB Creation 🖥️
+```bash
+# Create bootable USB
+usb /dev/disk2
+```
+
+## Download 🌐
+
+The homepage of this library is located at:
+https://github.com/flori/hackmac
+
+## Author 👨‍💻
 
 [Florian Frank](mailto:flori@ping.de)
 
-## License
+## License 📄
 
-This software is licensed under the MIT license.
+This software is licensed under the [MIT license](LICENSE). ✅
