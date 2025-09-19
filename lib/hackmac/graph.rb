@@ -120,7 +120,7 @@ class Hackmac::Graph
   end
 
   def perform(*a)
-    print *a
+    print(*a)
   end
 
   def columns
