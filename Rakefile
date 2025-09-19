@@ -14,6 +14,8 @@ GemHadar do
   test_dir    'tests'
   ignore      '.*.sw[pon]', 'pkg', 'Gemfile.lock', '.rvmrc', '.AppleDouble',
     'tags', '.bundle', '.DS_Store', '.byebug_history'
+  package_ignore '.gitignore', '.contexts'
+
   readme      'README.md'
 
   dependency  'tins',           '~>1.14'
@@ -25,4 +27,6 @@ GemHadar do
   dependency  'search_ui'
   dependency  'hashie'
   development_dependency 'debug'
+
+  licenses << 'MIT'
 end
