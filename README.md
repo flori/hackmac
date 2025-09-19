@@ -7,6 +7,10 @@ customizing Hackintosh configurations. While primarily intended for users with
 Hackintosh setups, it may also be useful for ordinary Mac users who want to
 leverage its features for monitoring system performance using `gfxmon`.
 
+## Documentation
+
+Complete API documentation is available at: [GitHub.io](https://flori.github.io/hackmac/)
+
 ## Tools 🛠️
 
 ### `efi` - EFI Partition Management 📁
