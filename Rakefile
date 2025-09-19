@@ -14,7 +14,7 @@ GemHadar do
   test_dir    'tests'
   ignore      '.*.sw[pon]', 'pkg', 'Gemfile.lock', '.rvmrc', '.AppleDouble',
     'tags', '.bundle', '.DS_Store', '.yardoc', 'doc'
-  package_ignore '.gitignore', '.contexts'
+  package_ignore '.gitignore', '.contexts', '.github'
 
   readme      'README.md'
 
