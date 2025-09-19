@@ -317,7 +317,7 @@ class Hackmac::Graph
   # formatting strategy
   #
   # This method applies the appropriate formatting to a value based on the
-  # @format_value instance variable configuration It supports different
+  # \@format_value instance variable configuration It supports different
   # formatting approaches including custom Proc objects, Symbol-based method
   # calls, and default formatting
   #

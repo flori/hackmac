@@ -26,7 +26,7 @@ module Hackmac
     # the provided block within that context. After the block completes, it
     # ensures proper cleanup of the temporary directory.
     #
-    # @param block [ Block ] the block to execute within the temporary
+    # @yield [ dir ] the block to execute within the temporary
     # directory context
     #
     # @return [ Object ] the return value of the yielded block

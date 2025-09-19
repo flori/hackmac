@@ -23,7 +23,7 @@ module Hackmac
     #
     # This method executes a shell command and parses its XML output into a
     # Ruby hash using the Plist library. The resulting hash is stored in the
-    # @plist instance variable for later access through other methods.
+    # \@plist instance variable for later access through other methods.
     #
     # @param cmd [Array<String>] command and arguments to execute
     #
