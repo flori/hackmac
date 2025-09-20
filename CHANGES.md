@@ -1,5 +1,27 @@
 # Changes
 
+## 2025-09-20 v1.8.4
+
+- Added a new section titled "Documentation" to the README with a link to the
+  API documentation hosted at GitHub.io
+- Renamed `.context/code_comment.rb` to `.contexts/code_comment.rb` and updated
+  the directory structure for code comment context files while maintaining all
+  existing functionality
+- Added a new GitHub Actions workflow file `.github/workflows/static.yml` to
+  deploy static content to GitHub Pages
+- Updated the `Rakefile` to include the `.github` directory in the
+  `package_ignore` list and configured the workflow to run on push to the
+  master branch and manual dispatch
+- Set up permissions for deployment to GitHub Pages and installed the
+  `gem_hadar` gem to generate documentation using `rake doc`
+- Added `.yardoc` and `doc` directories to `.gitignore` and updated the
+  `Rakefile` to ignore these directories while removing `.byebug_history` from
+  both files
+- Fixed markdown escaping in documentation comments, specifically updating the
+  `@param` documentation tag in `asset_tools.rb` to yield instead of block and
+  escaping `\@format_value` and `\@plist` references in `graph.rb` and
+  `plist.rb` respectively
+
 ## 2025-09-19 v1.8.3
 
 - Enhanced README with improved formatting and detailed tool descriptions
