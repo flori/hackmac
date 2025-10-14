@@ -41,9 +41,14 @@ module Hackmac
       @suffix  = (Regexp.quote(suffix) if suffix)
       _account, repo = github.split(?/)
       @name = repo
+      opts = {
+        'User-Agent' => "hackmac efi v#{Hackmac::VERSION}",
+        http_basic_authentication: auth,
+      }.compact
       releases = URI.open(
         GITHUB_API_URL % github,
-        http_basic_authentication: auth) { |o|
+        opts
+      ) { |o|
         JSON.parse(o.read, object_class: JSON::GenericObject)
       }
       if max_version = releases.map { |r|
