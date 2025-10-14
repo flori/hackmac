@@ -1,5 +1,10 @@
 # Changes
 
+## 2025-10-14 v1.8.6
+
+- Added support for consistent parsing of both **v1.2.3** and **1.2.3** tag
+  formats
+
 ## 2025-10-14 v1.8.5
 
 - Improved version parsing in `github_source.rb` by adding regex validation
