@@ -47,13 +47,14 @@ module Hackmac
         JSON.parse(o.read, object_class: JSON::GenericObject)
       }
       if max_version = releases.map { |r|
-          next unless r.tag_name.include?(?.)
-          tag = r.tag_name.delete '^.0-9'
+        tag = r.tag_name
+        if tag =~ /\A\d+\.\d+\.\d+\z/
           begin
             [ Version.new(tag), r ]
           rescue ArgumentError
           end
-        }.compact.max_by(&:first)
+        end
+      }.compact.max_by(&:first)
       then
         @version, @release = max_version
       end

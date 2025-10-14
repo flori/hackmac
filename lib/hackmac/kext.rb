@@ -83,10 +83,12 @@ module Hackmac
     def version
       unless @version
         if version = CFBundleShortVersionString()
-          begin
-            @version = Version.new(version)
-          rescue ArgumentError
-            @version = version
+          if version =~ /\A\d+\.\d+\.\d+\z/
+            begin
+              @version = Version.new(version)
+            rescue ArgumentError
+              @version = version
+            end
           end
         end
       end
