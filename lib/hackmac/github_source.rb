@@ -48,9 +48,9 @@ module Hackmac
       }
       if max_version = releases.map { |r|
         tag = r.tag_name
-        if tag =~ /\A\d+\.\d+\.\d+\z/
+        if tag =~ /\Av?(\d+\.\d+\.\d+)\z/
           begin
-            [ Version.new(tag), r ]
+            [ Version.new($1), r ]
           rescue ArgumentError
           end
         end
