@@ -1,5 +1,15 @@
 # Changes
 
+## 2025-10-15 v1.8.7
+
+- Configure **User-Agent** header with version for GitHub API calls
+- Refactor HTTP options into a single hash for cleaner API request handling
+- Use `http_basic_authentication` with **auth** variable for GitHub API
+  authentication
+- Apply `.compact` to remove nil values from HTTP options hash
+- Update `URI.open` call to use consolidated options hash instead of direct
+  keyword arguments
+
 ## 2025-10-14 v1.8.6
 
 - Added support for consistent parsing of both **v1.2.3** and **1.2.3** tag
