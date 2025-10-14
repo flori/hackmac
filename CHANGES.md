@@ -1,5 +1,15 @@
 # Changes
 
+## 2025-10-14 v1.8.5
+
+- Improved version parsing in `github_source.rb` by adding regex validation
+  `/\A\d+\.\d+\.\d+\z/` before creating `Version` objects
+- Enhanced version parsing in `kext.rb` with regex validation
+  `/\A\d+\.\d+\.\d+\z/` before parsing `CFBundleShortVersionString()` as a
+  version
+- Both changes ensure only valid semantic version strings are processed by the
+  `Version` class, preventing errors from malformed version identifiers
+
 ## 2025-09-20 v1.8.4
 
 - Added a new section titled "Documentation" to the README with a link to the
