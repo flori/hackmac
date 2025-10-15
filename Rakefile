@@ -18,6 +18,10 @@ GemHadar do
 
   readme      'README.md'
 
+  github_workflows(
+    'static.yml' => {}
+  )
+
   dependency  'tins',           '~>1.14'
   dependency  'term-ansicolor', '~>1.10'
   dependency  'complex_config'
