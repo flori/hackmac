@@ -1,5 +1,18 @@
 # Changes
 
+## 2025-10-15 v1.8.8
+
+- Handle invalid version strings by setting @version to **nil** instead of
+  storing malformed objects
+- Changes in `bin\efi`
+    - Refactor version comparison styling into reusable `styler` lambda
+    - Extract version formatting logic into separate `formatter` lambda
+    - Update `Tabulo::Table` configuration to use the new lambda functions
+    - Improve version display logic to handle **nil** version comparisons gracefully
+    - Replace inline rescue logic with explicit nil checks for better error handling
+- Updated `static.yml` workflow to use array syntax for branch specification
+- Added `github_workflows` configuration to `Rakefile` for `static.yml` workflow
+
 ## 2025-10-15 v1.8.7
 
 - Configure **User-Agent** header with version for GitHub API calls
