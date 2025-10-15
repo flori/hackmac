@@ -224,13 +224,28 @@ when 'kexts'
     warn  "#{path.to_s.inspect} has no info => Skipping."
   end.compact.sort_by(&:name)
   puts 'EFI'.yellow.bold + " (#{mdev})".bold
+  styler = -> v, s {
+    if v.version.nil? || v.remote_version.nil?
+      s.yellow
+    else
+      v.version < v.remote_version ? s.red : s.green
+    end
+  }
+  formatter = -> e {
+    if e.version.nil? || e.remote_version.nil?
+      e.version.to_s
+    else
+      operator = { 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version]
+      "%s %s %s" % [ e.version, operator, e.remote_version ]
+    end
+  }
   puts Tabulo::Table.new(on_efi, align_header: :left, border: :modern) { |t|
     t.add_column(:name, header_styler: bold_head)
     t.add_column(
       :itself,
       header: 'Version/Remote',
-      styler: -> v, s { v.version < v.remote_version ? s.red : s.green rescue s.yellow },
-      formatter: -> e { "%s %s %s" % [ e.version, ({ 0 => ?=, -1 => ?<, 1 => ?> }[e.version <=> e.remote_version] rescue nil), e.remote_version ] },
+      styler:,
+      formatter:,
       header_styler: bold_head
     )
     t.add_column(:path, header_styler: bold_head)

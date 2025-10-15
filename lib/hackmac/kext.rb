@@ -87,7 +87,7 @@ module Hackmac
             begin
               @version = Version.new(version)
             rescue ArgumentError
-              @version = version
+              @version = nil
             end
           end
         end
