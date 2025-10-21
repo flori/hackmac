@@ -249,18 +249,6 @@ class Hackmac::Graph
       end
     ]
   end
-  def pick_color
-    Term::ANSIColor::Attribute[
-      case @color
-      when Proc
-        @color.(@title)
-      when nil
-        derive_color_from_string(@title)
-      else
-        @color
-      end
-    ]
-  end
 
   # The sleep_now method calculates and executes a sleep duration based on the
   # configured sleep time and elapsed time since start
