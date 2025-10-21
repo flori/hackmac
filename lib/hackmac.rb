@@ -1,3 +1,13 @@
+# Hackmac is a set of Ruby tools specifically designed for managing and
+# customizing Hackintosh configurations. While primarily intended for users
+# with Hackintosh setups, it may also be useful for ordinary Mac users who want
+# to leverage its features for monitoring system performance using `gfxmon`.
+#
+# The library provides core functionality for:
+# - EFI partition management
+# - GPU performance monitoring
+# - USB bootable drive creation
+# - System configuration and validation
 module Hackmac
 end
 
