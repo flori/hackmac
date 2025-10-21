@@ -13,6 +13,7 @@ class Hackmac::Graph
   #   display = Hackmac::Graph::Display.new(24, 80)
   #   # Creates a 24x80 character display grid for terminal rendering
   class Display
+    # Shortcut for Term::ANSIColor module.
     ANSI = Term::ANSIColor
 
     # The initialize method sets up a Display instance by configuring its grid

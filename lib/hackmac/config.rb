@@ -26,6 +26,7 @@ module Hackmac
     extend ComplexConfig::Provider::Shortcuts
     extend Term::ANSIColor
 
+    # The default configuration settings for Hackmac application.
     DEFAULT = File.read(File.join(File.dirname(__FILE__), 'hackmac.yml'))
 
     # Loads the Hackmac configuration from the specified path or default

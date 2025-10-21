@@ -16,6 +16,8 @@ module Hackmac
   #   source = Hackmac::GithubSource.new('owner/repo', auth: ['user', 'token'])
   #   # Fetches latest release information and allows asset downloads
   class GithubSource
+
+    # The GitHub API URL template for fetching releases
     GITHUB_API_URL = 'https://api.github.com/repos/%s/releases'
 
     include Tins::StringVersion
