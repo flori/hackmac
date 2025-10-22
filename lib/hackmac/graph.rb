@@ -102,6 +102,44 @@ class Hackmac::Graph
 
   private
 
+  # Draws the graphical representation of the data on the display.
+  #
+  # This method renders the data as a graph using Unicode block characters (▀)
+  # to achieve 2px vertical resolution in terminal graphics. Each data point is
+  # plotted with appropriate color blending for visual appeal.
+  def draw_graph
+    y_width     = data_range
+    color       = pick_color
+    color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
+    data.each_with_index do |value, i|
+      x  = 1 + i + columns - data.size
+      y0 = ((value - data.min) * lines / y_width.to_f)
+      y  = lines - y0.round + 1
+      y.upto(lines) do |iy|
+        if iy > y
+          @display.at(iy, x).on_color(color_light).write(' ')
+        else
+          fract = 1 - (y0 - y0.floor).abs
+          case
+          when (0...0.5) === fract
+            @display.at(iy, x).color(0).on_color(color).write(?▀)
+          else
+            @display.at(iy, x).color(color).on_color(color_light).write(?▀)
+          end
+        end
+      end
+    end
+  end
+
+  # The data_range method calculates the range of data values by computing the
+  # difference between the maximum and minimum values in the data set and
+  # converting the result to a float
+  #
+  # @return [ Float ] the calculated range of the data values as a float
+  def data_range
+    (data.max - data.min).abs.to_f
+  end
+
   # The start_loop method executes a continuous loop to update and display
   # graphical data
   #
@@ -114,8 +152,6 @@ class Hackmac::Graph
   # until explicitly stopped.
   def start_loop
     full_reset
-    color       = pick_color
-    color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
     @counter    = -1
     @continue = true
     while @continue
@@ -126,8 +162,7 @@ class Hackmac::Graph
       @data << @value.(@counter += 1)
       @data = data.last(columns)
 
-      y_width = (data.max - data.min).to_f
-      if y_width == 0
+      if data_range.zero?
         @display.reset.bottom.styled(:bold).
           write_centered("#@title / #{sleep_duration}").
           reset.centered.styled(:italic).write_centered("no data")
@@ -137,15 +172,7 @@ class Hackmac::Graph
       end
 
       @display.reset
-      data.each_with_index do |value, x|
-        x = x + columns - data.size + 1
-        y = lines - (((value - data.min) * lines / y_width)).round + 1
-        y.upto(lines) do |iy|
-          @display.at(iy, x).on_color(
-            y == iy ? color : color_light
-          ).write(' ')
-        end
-      end
+      draw_graph
 
       @display.reset.bottom.styled(:bold).
         write_centered("#@title #{format_value(data.last)} / #{sleep_duration}")
