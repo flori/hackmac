@@ -2,6 +2,32 @@
 
 ## 2025-10-15 v1.8.8
 
+### Features
+
+*   Enhanced `Hackmac::Graph` with better terminal graphics using Unicode block
+    characters (`▀`) for 2px vertical resolution.
+
+### Refactorings
+
+*   Extracted `Hackmac::Graph::Formatters` module into its own file
+    (`lib/hackmac/graph/formatters.rb`).
+*   Moved `Hackmac::Graph::Display::Cell` class to a dedicated file
+    (`lib/hackmac/graph/display/cell.rb`).
+*   Refactored `Hackmac::Graph` rendering logic:
+    *   Introduced `draw_graph` private method to encapsulate graph drawing
+        logic.
+    *   Added `data_range` helper method for calculating data range.
+    *   Simplified `start_loop` by removing redundant code and leveraging new
+        helper methods.
+
+### Documentation
+
+*   Added detailed documentation for all public methods in `Hackmac::Graph` and
+    related modules.
+*   Included usage examples for `Hackmac::Graph::Formatters`.
+
+## 2025-10-15 v1.8.8
+
 - Handle invalid version strings by setting @version to **nil** instead of
   storing malformed objects
 - Changes in `bin\efi`
