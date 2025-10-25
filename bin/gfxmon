@@ -178,7 +178,7 @@ def display_graph
     graph = Hackmac::Graph.new(
       title: metric,
       sleep: sleep_duration,
-      value: -> _ { ps[metric] },
+      value: -> _ { ps[metric] || 0 },
       color: $opts[?c],
       format_value:
     )
