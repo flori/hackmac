@@ -41,7 +41,7 @@ class Hackmac::Graph
   include Hackmac::Graph::Formatters
 
   # The initialize method sets up a Graph instance by configuring its display
-  # parameters and internal state
+  # parameters and internal state.
   #
   # This method configures the graph visualization with title, value provider,
   # formatting options, update interval, and color settings. It initializes
@@ -49,28 +49,50 @@ class Hackmac::Graph
   # synchronization through a mutex for thread-safe operations.
   #
   # @param title [ String ] the title to display at the bottom of the graph
-  # @param value [ Proc ] a proc that takes an index and returns a numeric value for plotting
-  # @param format_value [ Proc, Symbol, nil ] formatting strategy for displaying values
+  # @param value [ Proc ] a proc that takes an index and returns a numeric
+  #   value for plotting
+  # @param format_value [ Proc, Symbol, nil ] formatting strategy for
+  #   displaying values
   # @param sleep [ Numeric ] time in seconds between updates
-  # @param color [ Integer, Proc, nil ] color index or proc to determine color dynamically
+  # @param color [ Integer, Proc, nil ] color index or proc to determine color
+  #   dynamically
+  # @param color_secondary [ Integer, Proc, nil ] secondary color index or proc
+  #   for enhanced visuals
+  # @param adjust_brightness [ Symbol ] the method to call on the color for
+  #   brightness adjustment
+  # @param adjust_brightness_percentage [ Integer ] the percentage value to use
+  #   for the brightness adjustment
+  # @param foreground_color [ Symbol ] the default text color for the display
+  # @param background_color [ Symbol ] the default background color for the
+  #   display
   #
   # @raise [ ArgumentError ] if the sleep parameter is negative
   def initialize(
     title:,
-    value: -> i { 0 },
-    format_value: nil,
-    sleep: nil,
-    color: nil
+    value:                        -> i { 0 },
+    format_value:                 nil,
+    sleep:                        nil,
+    color:                        nil,
+    color_secondary:              nil,
+    adjust_brightness:            :lighten,
+    adjust_brightness_percentage: 15,
+    foreground_color:             :white,
+    background_color:             :black
   )
     sleep >= 0 or raise ArgumentError, 'sleep has to be >= 0'
-    @title        = title
-    @value        = value
-    @format_value = format_value
-    @sleep        = sleep
-    @continue     = false
-    @data         = []
-    @color        = color
-    @mutex        = Mutex.new
+    @title                        = title
+    @value                        = value
+    @format_value                 = format_value
+    @sleep                        = sleep
+    @continue                     = false
+    @data                         = []
+    @color                        = color
+    @color_secondary              = color_secondary
+    @adjust_brightness            = adjust_brightness
+    @adjust_brightness_percentage = adjust_brightness_percentage
+    @foreground_color             = foreground_color
+    @background_color             = background_color
+    @mutex                        = Mutex.new
   end
 
   # The start method initiates the graphical display process by setting up
@@ -108,23 +130,27 @@ class Hackmac::Graph
   # to achieve 2px vertical resolution in terminal graphics. Each data point is
   # plotted with appropriate color blending for visual appeal.
   def draw_graph
-    y_width     = data_range
-    color       = pick_color
-    color_light = color.to_rgb_triple.to_hsl_triple.lighten(15) rescue color
+    y_width         = data_range
+    color           = pick_color
+    color_secondary = pick_secondary_color(
+      color,
+      adjust_brightness:            @adjust_brightness,
+      adjust_brightness_percentage: @adjust_brightness_percentage
+    )
     data.each_with_index do |value, i|
       x  = 1 + i + columns - data.size
       y0 = ((value - data.min) * lines / y_width.to_f)
       y  = lines - y0.round + 1
       y.upto(lines) do |iy|
         if iy > y
-          @display.at(iy, x).on_color(color_light).write(' ')
+          @display.at(iy, x).on_color(color_secondary).write(' ')
         else
           fract = 1 - (y0 - y0.floor).abs
           case
           when (0...0.5) === fract
             @display.at(iy, x).on_color(0).color(color).write(?▄)
           else
-            @display.at(iy, x).on_color(color).color(color_light).write(?▄)
+            @display.at(iy, x).on_color(color).color(color_secondary).write(?▄)
           end
         end
       end
@@ -277,6 +303,25 @@ class Hackmac::Graph
     ]
   end
 
+  # The pick_secondary_color method determines a secondary color based on a
+  # primary color and brightness adjustment parameters It returns the
+  # pre-configured secondary color if one exists, otherwise
+  # calculates a new color by adjusting the brightness of the primary color
+  #
+  # @param color [ Term::ANSIColor::Attribute ] the primary color attribute to
+  #   be used as a base for calculation
+  # @param adjust_brightness [ Symbol ] the method to call on the color for
+  #   brightness adjustment
+  # @param adjust_brightness_percentage [ Integer ] the percentage value to use
+  #   for the brightness adjustment
+  # @return [ Term::ANSIColor::Attribute ] the secondary color attribute,
+  #   either pre-configured or calculated from the primary color
+  def pick_secondary_color(color, adjust_brightness:, adjust_brightness_percentage:)
+    @color_secondary and return @color_secondary
+    color_primary = color.to_rgb_triple.to_hsl_triple
+    color_primary.send(adjust_brightness, adjust_brightness_percentage) rescue color
+  end
+
   # The sleep_now method calculates and executes a sleep duration based on the
   # configured sleep time and elapsed time since start
   #
@@ -365,8 +410,12 @@ class Hackmac::Graph
     @mutex.synchronize do
       perform reset, clear_screen, move_home, show_cursor
       winsize = Tins::Terminal.winsize
-      @display     = Hackmac::Graph::Display.new(*winsize)
-      @old_display = Hackmac::Graph::Display.new(*winsize)
+      opts = {
+           color: @foreground_color,
+        on_color: @background_color,
+      }
+      @display     = Hackmac::Graph::Display.new(*winsize, **opts)
+      @old_display = Hackmac::Graph::Display.new(*winsize, **opts)
       perform @display
       @full_reset = false
     end

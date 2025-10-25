@@ -27,9 +27,13 @@ class Hackmac::Graph
     # @param lines [ Integer ] the number of lines (rows) in the display grid
     # @param columns [ Integer ] the number of columns (characters per line) in
     #   the display grid
-    def initialize(lines, columns)
+    # @param color [ Symbol ] the default text color for the display
+    # @param on_color [ Symbol ] the default background color for the display
+    def initialize(lines, columns, color: :white, on_color: :black)
       @lines_range   = 1..lines
       @columns_range = 1..columns
+      @orig_color    = color
+      @orig_on_color = on_color
       clear
     end
 
@@ -42,13 +46,16 @@ class Hackmac::Graph
     # array of Cell objects that represent the display grid, filling each cell
     # with a space character and default styling attributes
     #
+    # @param color [ Symbol ] the default text color for the display
+    # @param on_color [ Symbol ] the default background color for the display
+    #
     # @return [ Hackmac::Graph::Display ] returns the Display instance to allow
     #   for method chaining
     def clear
       @x        = 1
       @y        = 1
-      @color    = 15
-      @on_color = 0
+      @color    = @orig_color
+      @on_color = @orig_on_color
       @styles   = []
       @cells    =
         Array.new(lines) {
@@ -70,8 +77,8 @@ class Hackmac::Graph
     # @return [ Hackmac::Graph::Display ] returns the Display instance to allow
     #   for method chaining
     def reset
-      @color    = 15
-      @on_color = 0
+      @color    = @orig_color
+      @on_color = @orig_on_color
       @styles   = []
       self
     end
