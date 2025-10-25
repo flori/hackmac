@@ -1,5 +1,21 @@
 # Changes
 
+## 2025-10-25 v1.10.0
+
+- Added `-C` command line option to specify secondary color for terminal
+      graphs, accepting color values between **0** - **255**
+    - Updated `Hackmac::Graph.new` call to include `color_secondary:` parameter
+    - Modified `usage` method to document the new `-C` option
+    - Maintained backward compatibility with existing `-c` color option
+- Added support for `color_secondary`, `adjust_brightness`, and `adjust_brightness_percentage` parameters in `Hackmac::Graph#initialize`
+- Introduced `pick_secondary_color` method to calculate secondary colors based on brightness adjustments
+- Updated `draw_graph` to use secondary colors for improved visual contrast
+- Modified `Hackmac::Graph::Display#initialize` to accept `color` and `on_color` parameters
+- Configured `@display` and `@old_display` with default color settings in `Hackmac::Graph#reset_display`
+- Default `adjust_brightness` to **:lighten** with **15%** brightness adjustment
+- Default `foreground_color` to **:white** and `background_color` to **:black**
+- Added conditional check `if @plist` before extending with `Hashie::Extensions::DeepFind` to prevent `NoMethodError` when `@plist` is nil or undefined
+
 ## 2025-10-25 v1.9.1
 
 - Addresses display issues in tmux panes where background colors bled through
