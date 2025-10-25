@@ -32,6 +32,17 @@ module Hackmac
       @plist = ::Plist.parse_xml(`#{Shellwords.join(cmd)}`)
     end
 
+    # The exist? method checks whether plist data has been loaded
+    #
+    # This method returns a truthy value if plist data has been successfully
+    # parsed and stored in the instance variable, or nil if no plist data is
+    # available.
+    #
+    # @return [ Object, nil ] returns the plist data if present, nil otherwise
+    def exist?
+      @plist
+    end
+
     # Returns a duplicate of the internal plist hash
     #
     # This method provides access to the parsed plist data by returning a shallow copy
