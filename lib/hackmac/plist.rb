@@ -51,7 +51,7 @@ module Hackmac
     #
     # @return [ Hash ] a duplicate of the plist hash containing the parsed XML data
     def as_hash(*a)
-      @plist.dup
+      @plist.dup.to_h
     end
 
     # The each method iterates over the parsed plist data
