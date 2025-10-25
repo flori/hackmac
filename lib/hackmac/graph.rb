@@ -122,9 +122,9 @@ class Hackmac::Graph
           fract = 1 - (y0 - y0.floor).abs
           case
           when (0...0.5) === fract
-            @display.at(iy, x).color(0).on_color(color).write(?▀)
+            @display.at(iy, x).on_color(0).color(color).write(?▄)
           else
-            @display.at(iy, x).color(color).on_color(color_light).write(?▀)
+            @display.at(iy, x).on_color(color).color(color_light).write(?▄)
           end
         end
       end
