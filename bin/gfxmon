@@ -19,8 +19,6 @@
 #   gfxmon -n 3                # Update every 3 seconds
 #   gfxmon -m "Temperature(C)" # Show specific metric
 
-require 'tins'
-include Tins::GO
 require 'term/ansicolor'
 Term::ANSIColor.true_coloring = ENV['COLORTERM'] =~ /\A(truecolor|24bit)\z/
 include Term::ANSIColor
@@ -29,6 +27,7 @@ class String
 end
 require 'hackmac'
 include Hackmac
+include Tins::GO
 require 'amatch'
 require 'search_ui'
 include SearchUI
@@ -67,7 +66,12 @@ end
 # @return [ Hash ] a hash containing the performance statistics data from the
 #   IORegistry
 def ps
-  Hackmac::IOReg.new(key: 'PerformanceStatistics').as_hash
+  ioreg = Hackmac::IOReg.new(key: 'PerformanceStatistics')
+  if ioreg.exist?
+    ioreg.as_hash
+  else
+    {}
+  end
 end
 
 # The list method displays a formatted key-value pair listing with colored
