@@ -1,5 +1,37 @@
 # Changes
 
+## 2025-10-25 v1.9.1
+
+- Addresses display issues in tmux panes where background colors bled through
+  due to changed character rendering
+- Updated `ps` method to return an empty hash `{}` instead of raising an error
+  when `PerformanceStatistics` key doesn't exist in IORegistry
+- Added `exist?` method to the `Hackmac` module to check if plist data is
+  loaded, returning `@plist` instance variable or `nil` if no data is available
+- Ensured the returned value is always a hash in the `ps` method
+- Modified `ps` method to handle nil values from `ps[metric]` by defaulting to
+  **0** to prevent potential errors when metric data is missing from the
+  process snapshot
+
+## 2025-10-23 v1.9.0
+
+- Added `draw_graph` method to render data using Unicode block characters (`▀`)
+- Introduced `data_range` helper to calculate data value range as `Float`
+- Refactored `start_loop` to use `draw_graph` instead of inline rendering logic
+- Moved color calculation and `y_width` logic into `draw_graph` method
+- Replaced direct graph drawing in `start_loop` with call to `draw_graph`
+- Implemented `data_range.zero?` check to handle flat data scenarios
+- Added fractional pixel blending for visual appeal
+- Used `color.to_rgb_triple.to_hsl_triple.lighten(15)` for background shading
+- Added fallback handling for color conversion errors with `rescue color`
+- Supported terminal graphics with 2px vertical resolution using Unicode characters
+- Updated `@display.at(iy, x)` calls with color styling for graph rendering
+- Removed duplicate `pick_color` method
+- Added YARD documentation for `Hackmac::Config::DEFAULT`, `Hackmac::GithubSource::GITHUB_API_URL`, and `Hackmac::Graph::Display::ANSI` constants
+- Updated module documentation with project description and features
+- Refactored Graph formatters into separate `Hackmac::Graph::Formatters` module
+- Refactored `Hackmac::Graph::Display::Cell` class into separate file `lib/hackmac/graph/display/cell.rb`
+
 ## 2025-10-15 v1.8.8
 
 ### Features
