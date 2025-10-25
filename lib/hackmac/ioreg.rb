@@ -28,8 +28,10 @@ module Hackmac
     #   IOService tree
     def initialize(key:)
       plist(*(%w[ioreg -a -p IOService -r -k ] << key))
-      @plist.extend Hashie::Extensions::DeepFind
-      @plist = @plist.deep_find_all(key).max_by(&:size)
+      if @plist
+        @plist.extend Hashie::Extensions::DeepFind
+        @plist = @plist.deep_find_all(key).max_by(&:size)
+      end
     end
   end
 end
