@@ -183,7 +183,7 @@ end
 # @see derive_formatter
 def display_graph
   if metric = choose_metric(ps)
-    sleep_duration = [ 1, ($opts[?n] || 10).to_i ].max
+    sleep_duration = [ 0.01, ($opts[?n] || 10).to_f ].max
     format_value = derive_formatter(metric)
     graph = Hackmac::Graph.new(
       title:            metric,
