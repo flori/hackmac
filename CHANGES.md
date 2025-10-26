@@ -1,5 +1,39 @@
 # Changes
 
+## 2025-10-26 v1.11.0
+
+- Reduced minimum sleep duration in gfxmon from **1** second to **0.01**
+  seconds
+- Changed sleep duration calculation in gfxmon to use `.to_f` instead of
+  `.to_i` for sub-second precision
+- Updated `Hackmac::Graph` parameter handling:
+  - Clarified documentation for `color` and `color_secondary` parameters to
+    indicate `nil` values derive colors from the title
+  - Set default value for `sleep` parameter to **5** seconds
+  - Added `@raise [TypeError]` documentation for `sleep` parameter
+  - Converted `sleep` parameter to `Float` and validated it's non-negative
+- Added validation and normalization for graph constructor parameters:
+  - Validated `adjust_brightness` to be either `:lighten` or `:darken`
+  - Converted `adjust_brightness` to symbol using `to_sym`
+  - Ensured `adjust_brightness_percentage` is a `Float`
+  - Fixed typo in error message for `resolution` parameter
+- Added `-f` and `-b` command-line options to `gfxmon` for foreground and
+  background colors
+  - Default foreground color is `:white` and background color is `:black`
+  - Updated `Hackmac::Graph` class to accept `foreground_color` and
+    `background_color` parameters
+  - Modified rendering logic to use `@background_color` instead of hardcoded
+    `0` for background color
+  - Updated help text to document the new `-f` and `-b` options
+- Added `-r` command-line option to `gfxmon` with values `single` or `double`
+  - Default resolution is `:double`
+  - Updated `Hackmac::Graph` class to accept and validate `resolution`
+    parameter
+  - Used spaces (`' '`) for `:single` resolution to display lower resolution
+  - Added `ArgumentError` validation for invalid resolution values
+  - Updated help text to document the new `-r` option
+- Removed redundant `@return` tags from documentation
+
 ## 2025-10-25 v1.10.0
 
 - Added `-C` command line option to specify secondary color for terminal
