@@ -26,8 +26,6 @@ module Hackmac
     # \@plist instance variable for later access through other methods.
     #
     # @param cmd [Array<String>] command and arguments to execute
-    #
-    # @return [void] Returns nothing, but sets the @plist instance variable
     def plist(*cmd)
       @plist = ::Plist.parse_xml(`#{Shellwords.join(cmd)}`)
     end

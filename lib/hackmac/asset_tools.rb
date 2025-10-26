@@ -48,8 +48,6 @@ module Hackmac
     #
     # @param name [ String ] the path to the compressed file to be decompressed
     #
-    # @return [ void ] Returns nothing, but performs system decompression operations
-    #
     # @raise [ RuntimeError ] raised when the file extension is not supported or
     #                         decompression commands fail
     def decompress(name)

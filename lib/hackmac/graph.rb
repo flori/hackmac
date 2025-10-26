@@ -352,9 +352,6 @@ class Hackmac::Graph
   # When the DEBUG_BYTESIZE environment variable is set, it also outputs
   # debugging information about the size of the diff and the time elapsed since
   # the last debug output
-  #
-  # @return [ void ] Returns nothing but performs terminal output operations
-  #   and updates internal display state
   def perform_display_diff
     @mutex.synchronize do
       unless @old_display && @old_display.dimensions == @display.dimensions

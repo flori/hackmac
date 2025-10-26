@@ -47,8 +47,6 @@ module Hackmac
     # installation paths, and performing the actual file replacement after user
     # confirmation
     #
-    # @return [ void ] Returns nothing but performs file system operations and
-    #   user interaction
     # @raise [ RuntimeError ] raised when a remote download fails or when no
     #   source is defined for the kext
     def perform

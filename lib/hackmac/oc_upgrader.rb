@@ -28,8 +28,6 @@ module Hackmac
     #
     # @param mdev [ String ] the mount device identifier for the EFI partition
     # @param config [ Object ] the configuration object containing OpenCore settings including the EFI path
-    #
-    # @return [ void ] Returns nothing but initializes instance variables for the upgrade process
     def initialize(mdev:, config:)
       @config      = config
       mount_path   = Pathname.new('/Volumes').join(mdev)
@@ -45,8 +43,6 @@ module Hackmac
     # operations to replace existing EFI files after ensuring
     # the installation directory is properly configured
     #
-    # @return [ void ] Returns nothing but performs file system operations and
-    #   user interaction
     # @raise [ RuntimeError ] raised when a remote download fails or when no
     #   source is defined for the OpenCore upgrade
     def perform
