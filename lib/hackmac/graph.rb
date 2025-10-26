@@ -58,8 +58,8 @@ class Hackmac::Graph
   # @param color_secondary [ Integer, Proc, nil ] secondary color index or proc
   #   for enhanced visuals
   # @param adjust_brightness [ Symbol ] the method to call on the color for
-  #   brightness adjustment
-  # @param adjust_brightness_percentage [ Integer ] the percentage value to use
+  #   brightness adjustment (:lighten or :darken), defaults to :lighten
+  # @param adjust_brightness_percentage [ Float ] the percentage value to use
   #   for the brightness adjustment
   # @param foreground_color [ Symbol ] the default text color for the display
   # @param background_color [ Symbol ] the default background color for the
@@ -91,15 +91,20 @@ class Hackmac::Graph
     @data                         = []
     @color                        = color
     @color_secondary              = color_secondary
-    @adjust_brightness            = adjust_brightness
-    @adjust_brightness_percentage = adjust_brightness_percentage
+    adjust_brightness             = adjust_brightness.to_sym
+    if %i[ lighten darken ].include? adjust_brightness
+      @adjust_brightness          = adjust_brightness
+    else
+      raise ArgumentError, 'adjust_brightness required to be either :lighten or :darken'
+    end
+    @adjust_brightness_percentage = Float(adjust_brightness_percentage)
     @foreground_color             = foreground_color
     @background_color             = background_color
     resolution                    = resolution.to_sym
     if %i[ single double ].include? resolution
-      @resolution = resolution
+      @resolution                 = resolution
     else
-      raise ArgumentError, 'resolution required to be either :single or :dobule'
+      raise ArgumentError, 'resolution required to be either :single or :double'
     end
     @mutex                        = Mutex.new
   end
