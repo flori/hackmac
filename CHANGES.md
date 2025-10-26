@@ -37,18 +37,25 @@
 ## 2025-10-25 v1.10.0
 
 - Added `-C` command line option to specify secondary color for terminal
-      graphs, accepting color values between **0** - **255**
+  graphs, accepting color values between **0** - **255**
     - Updated `Hackmac::Graph.new` call to include `color_secondary:` parameter
     - Modified `usage` method to document the new `-C` option
     - Maintained backward compatibility with existing `-c` color option
-- Added support for `color_secondary`, `adjust_brightness`, and `adjust_brightness_percentage` parameters in `Hackmac::Graph#initialize`
-- Introduced `pick_secondary_color` method to calculate secondary colors based on brightness adjustments
+- Added support for `color_secondary`, `adjust_brightness`, and
+  `adjust_brightness_percentage` parameters in `Hackmac::Graph#initialize`
+- Introduced `pick_secondary_color` method to calculate secondary colors based
+  on brightness adjustments
 - Updated `draw_graph` to use secondary colors for improved visual contrast
-- Modified `Hackmac::Graph::Display#initialize` to accept `color` and `on_color` parameters
-- Configured `@display` and `@old_display` with default color settings in `Hackmac::Graph#reset_display`
-- Default `adjust_brightness` to **:lighten** with **15%** brightness adjustment
+- Modified `Hackmac::Graph::Display#initialize` to accept `color` and
+  `on_color` parameters
+- Configured `@display` and `@old_display` with default color settings in
+  `Hackmac::Graph#reset_display`
+- Default `adjust_brightness` to **:lighten** with **15%** brightness
+  adjustment
 - Default `foreground_color` to **:white** and `background_color` to **:black**
-- Added conditional check `if @plist` before extending with `Hashie::Extensions::DeepFind` to prevent `NoMethodError` when `@plist` is nil or undefined
+- Added conditional check `if @plist` before extending with
+  `Hashie::Extensions::DeepFind` to prevent `NoMethodError` when `@plist` is
+  nil or undefined
 
 ## 2025-10-25 v1.9.1
 
@@ -74,13 +81,17 @@
 - Added fractional pixel blending for visual appeal
 - Used `color.to_rgb_triple.to_hsl_triple.lighten(15)` for background shading
 - Added fallback handling for color conversion errors with `rescue color`
-- Supported terminal graphics with 2px vertical resolution using Unicode characters
+- Supported terminal graphics with 2px vertical resolution using Unicode
+  characters
 - Updated `@display.at(iy, x)` calls with color styling for graph rendering
 - Removed duplicate `pick_color` method
-- Added YARD documentation for `Hackmac::Config::DEFAULT`, `Hackmac::GithubSource::GITHUB_API_URL`, and `Hackmac::Graph::Display::ANSI` constants
+- Added YARD documentation for `Hackmac::Config::DEFAULT`,
+  `Hackmac::GithubSource::GITHUB_API_URL`, and `Hackmac::Graph::Display::ANSI`
+  constants
 - Updated module documentation with project description and features
 - Refactored Graph formatters into separate `Hackmac::Graph::Formatters` module
-- Refactored `Hackmac::Graph::Display::Cell` class into separate file `lib/hackmac/graph/display/cell.rb`
+- Refactored `Hackmac::Graph::Display::Cell` class into separate file
+  `lib/hackmac/graph/display/cell.rb`
 
 ## 2025-10-15 v1.8.8
 
@@ -116,10 +127,13 @@
     - Refactor version comparison styling into reusable `styler` lambda
     - Extract version formatting logic into separate `formatter` lambda
     - Update `Tabulo::Table` configuration to use the new lambda functions
-    - Improve version display logic to handle **nil** version comparisons gracefully
-    - Replace inline rescue logic with explicit nil checks for better error handling
+    - Improve version display logic to handle **nil** version comparisons
+      gracefully
+    - Replace inline rescue logic with explicit nil checks for better error
+      handling
 - Updated `static.yml` workflow to use array syntax for branch specification
-- Added `github_workflows` configuration to `Rakefile` for `static.yml` workflow
+- Added `github_workflows` configuration to `Rakefile` for `static.yml`
+  workflow
 
 ## 2025-10-15 v1.8.7
 
