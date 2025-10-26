@@ -40,8 +40,7 @@ class Hackmac::Graph
   include Term::ANSIColor
   include Hackmac::Graph::Formatters
 
-  # The initialize method sets up a Graph instance by configuring its display
-  # parameters and internal state.
+  # The initialize method sets up a Graph instance by configuring its display parameters and internal state.
   #
   # This method configures the graph visualization with title, value provider,
   # formatting options, update interval, and color settings. It initializes
@@ -65,8 +64,11 @@ class Hackmac::Graph
   # @param foreground_color [ Symbol ] the default text color for the display
   # @param background_color [ Symbol ] the default background color for the
   #   display
+  # @param resolution [ Symbol ] the resolution mode (:single or :double) for
+  #   the graph display, defaults to :double.
   #
   # @raise [ ArgumentError ] if the sleep parameter is negative
+  # @raise [ ArgumentError ] if the resolution parameter is not :single or :double
   def initialize(
     title:,
     value:                        -> i { 0 },
@@ -77,7 +79,8 @@ class Hackmac::Graph
     adjust_brightness:            :lighten,
     adjust_brightness_percentage: 15,
     foreground_color:             :white,
-    background_color:             :black
+    background_color:             :black,
+    resolution:                   :double
   )
     sleep >= 0 or raise ArgumentError, 'sleep has to be >= 0'
     @title                        = title
@@ -92,6 +95,12 @@ class Hackmac::Graph
     @adjust_brightness_percentage = adjust_brightness_percentage
     @foreground_color             = foreground_color
     @background_color             = background_color
+    resolution                    = resolution.to_sym
+    if %i[ single double ].include? resolution
+      @resolution = resolution
+    else
+      raise ArgumentError, 'resolution required to be either :single or :dobule'
+    end
     @mutex                        = Mutex.new
   end
 
@@ -145,12 +154,17 @@ class Hackmac::Graph
         if iy > y
           @display.at(iy, x).on_color(color_secondary).write(' ')
         else
-          fract = 1 - (y0 - y0.floor).abs
-          case
-          when (0...0.5) === fract
-            @display.at(iy, x).on_color(0).color(color).write(?▄)
+          case @resolution
+          when :double
+            fract = 1 - (y0 - y0.floor).abs
+            case
+            when (0...0.5) === fract
+              @display.at(iy, x).on_color(0).color(color).write(?▄)
+            else
+              @display.at(iy, x).on_color(color).color(color_secondary).write(?▄)
+            end
           else
-            @display.at(iy, x).on_color(color).color(color_secondary).write(?▄)
+            @display.at(iy, x).on_color(color).color(color_secondary).write(' ')
           end
         end
       end

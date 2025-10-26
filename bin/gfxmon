@@ -32,7 +32,7 @@ require 'amatch'
 require 'search_ui'
 include SearchUI
 
-$opts = go 'c:C:m:n:jlh', defaults: { ?s => true, ?n => 5 }
+$opts = go 'c:C:m:n:r:jlh', defaults: { ?s => true, ?n => 5, ?r => :double }
 
 # The usage method displays command-line usage information and options
 #
@@ -47,13 +47,14 @@ def usage
 
     OPTIONS are
 
-      -h          this help
-      -l          output GPU performance data as list
-      -j          output GPU performance data as json
-      -n SECONDS  measure every SECONDS
-      -m METRIC   output graph for performance METRIC
-      -c COLOR    output graph in this terminal COLOR (between 0 - 255)
-      -C COLOR    output graph using secondary color COLOR
+      -h            this help
+      -l            output GPU performance data as list
+      -j            output GPU performance data as json
+      -n SECONDS    measure every SECONDS
+      -m METRIC     output graph for performance METRIC
+      -c COLOR      output graph in this terminal COLOR (between 0 - 255)
+      -C COLOR      output graph using secondary color COLOR
+      -r RESOLUTION is either single or double (uses half blocks)
 
   EOT
   0
@@ -182,6 +183,7 @@ def display_graph
       value:           -> _ { ps[metric] || 0 },
       color:           $opts[?c],
       color_secondary: $opts[?C],
+      resolution:      $opts[?r],
       format_value:
     )
     graph.start
