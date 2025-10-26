@@ -53,10 +53,10 @@ class Hackmac::Graph
   # @param format_value [ Proc, Symbol, nil ] formatting strategy for
   #   displaying values
   # @param sleep [ Numeric ] time in seconds between updates
-  # @param color [ Integer, Proc, nil ] color index or proc to determine color
-  #   dynamically
-  # @param color_secondary [ Integer, Proc, nil ] secondary color index or proc
-  #   for enhanced visuals
+  # @param color [ Object, Proc, nil ] color or proc or nil. nil
+  #   determineicolor dynamically from the title
+  # @param color_secondary [ Object, nil ] secondary color or nil
+  #   for enhanced visuals, nil derives secondary color from (primary) color
   # @param adjust_brightness [ Symbol ] the method to call on the color for
   #   brightness adjustment (:lighten or :darken), defaults to :lighten
   # @param adjust_brightness_percentage [ Float ] the percentage value to use
@@ -68,12 +68,13 @@ class Hackmac::Graph
   #   the graph display, defaults to :double.
   #
   # @raise [ ArgumentError ] if the sleep parameter is negative
+  # @raise [ TypeError ] if the sleep parameter is not numeric
   # @raise [ ArgumentError ] if the resolution parameter is not :single or :double
   def initialize(
     title:,
     value:                        -> i { 0 },
     format_value:                 nil,
-    sleep:                        nil,
+    sleep:                        5,
     color:                        nil,
     color_secondary:              nil,
     adjust_brightness:            :lighten,
@@ -82,10 +83,11 @@ class Hackmac::Graph
     background_color:             :black,
     resolution:                   :double
   )
-    sleep >= 0 or raise ArgumentError, 'sleep has to be >= 0'
     @title                        = title
     @value                        = value
     @format_value                 = format_value
+    sleep = Float(sleep)
+    sleep >= 0 or raise ArgumentError, 'sleep has to be >= 0'
     @sleep                        = sleep
     @continue                     = false
     @data                         = []
