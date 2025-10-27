@@ -1,5 +1,22 @@
 # Changes
 
+## 2025-10-27 v2.0.0
+
+- Added `graphina` gem as a runtime dependency in `Rakefile`
+- Replace internal `Hackmac::Graph` implementation with dependency on `graphina` **v1.0.0**
+- Update `bin/gfxmon` to require `graphina` and use `Graphina::Graph` instead
+  of `Hackmac::Graph`
+- Migrate `Hackmac::Graph::Formatters` to `Graphina::Graph::Formatters`
+- Pass `true_coloring` option directly to `Graphina::Graph.new`
+- Remove `ensure graph&.stop` block as `graphina` handles cleanup internally
+- Update `lib/hackmac.rb` to require `graphina` and remove `hackmac/graph.rb`
+  require
+- Delete old `hackmac/graph.rb`, `hackmac/graph/display.rb`,
+  `hackmac/graph/display/cell.rb`, and `hackmac/graph/formatters.rb` files
+- Remove default value for option `s` in `gfxmon` script
+- Remove obsolete default value for sleep duration
+- Update `CHANGES.md` with formatted bullet points
+
 ## 2025-10-26 v1.11.0
 
 - Reduced minimum sleep duration in gfxmon from **1** second to **0.01**
