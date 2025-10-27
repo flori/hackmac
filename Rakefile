@@ -30,6 +30,7 @@ GemHadar do
   dependency  'tabulo'
   dependency  'search_ui'
   dependency  'hashie'
+  dependency  'graphina'
   development_dependency 'debug'
 
   licenses << 'MIT'
