@@ -20,11 +20,10 @@
 #   gfxmon -m "Temperature(C)" # Show specific metric
 
 require 'term/ansicolor'
-Term::ANSIColor.true_coloring = ENV['COLORTERM'] =~ /\A(truecolor|24bit)\z/
-include Term::ANSIColor
 class String
   include Term::ANSIColor
 end
+require 'graphina'
 require 'hackmac'
 include Hackmac
 include Tins::GO
@@ -94,7 +93,7 @@ end
 # @param ps [ Hash ] a hash containing string keys and numeric or string values to be displayed
 def list(ps)
   max = ps.keys.max_by(&:size)&.size&.to_i
-  include Hackmac::Graph::Formatters
+  include Graphina::Graph::Formatters
   puts ps.sort_by(&:first).map { |n, v|
     c = derive_color_from_string(n)
     ("%-#{max}s" % n).color(15).on_color(c) + " " + ("%12s" % send(derive_formatter(n), v)).bold
@@ -177,17 +176,18 @@ end
 #
 # @return [ void ] Returns nothing but initiates the graphical display loop for system metrics
 #
-# @see Hackmac::Graph
+# @see Graphina::Graph
 # @see choose_metric
 # @see derive_formatter
 def display_graph
   if metric = choose_metric(ps)
     sleep_duration = [ 0.01, $opts[?n].to_f ].max
     format_value = derive_formatter(metric)
-    graph = Hackmac::Graph.new(
+    graph = Graphina::Graph.new(
       title:            metric,
       sleep:            sleep_duration,
       value:            -> _ { ps[metric] || 0 },
+      true_coloring:    ENV['COLORTERM'] =~ /\A(truecolor|24bit)\z/,
       color:            $opts[?c],
       color_secondary:  $opts[?C],
       foreground_color: $opts[?f],
@@ -197,8 +197,6 @@ def display_graph
     )
     graph.start
   end
-ensure 
-  graph&.stop
 end
 
 case
