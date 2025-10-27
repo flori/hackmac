@@ -33,7 +33,6 @@ require 'search_ui'
 include SearchUI
 
 $opts = go 'c:C:m:n:f:b:r:jlh', defaults: {
-  ?s => true,
   ?n => 5,
   ?r => :double,
   ?f => :white,
