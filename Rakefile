@@ -24,13 +24,13 @@ GemHadar do
 
   dependency  'tins',           '~>1.14'
   dependency  'term-ansicolor', '~>1.10'
+  dependency  'graphina',       '~>0.3'
   dependency  'complex_config'
   dependency  'amatch'
   dependency  'plist'
   dependency  'tabulo'
   dependency  'search_ui'
   dependency  'hashie'
-  dependency  'graphina'
   development_dependency 'debug'
 
   licenses << 'MIT'
