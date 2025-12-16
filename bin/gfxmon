@@ -186,7 +186,7 @@ def display_graph
     graph = Graphina::Graph.new(
       title:            metric,
       sleep:            sleep_duration,
-      value:            -> _ { ps[metric] || 0 },
+      value:            -> _ { (metric =~ /MHz/ ? 1_000_000 : 1) * (ps[metric] || 0) },
       true_coloring:    ENV['COLORTERM'] =~ /\A(truecolor|24bit)\z/,
       color:            $opts[?c],
       color_secondary:  $opts[?C],
