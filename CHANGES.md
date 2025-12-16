@@ -1,5 +1,12 @@
 # Changes
 
+## 2025-12-16 v2.0.1
+
+- Updated `value` proc in `Graphina::Graph.new` call to scale MHz values by
+  **1000000**
+- Updated dependency list to use proper version specification `~> 0.3` for
+  `graphina`
+
 ## 2025-10-27 v2.0.0
 
 - Added `graphina` gem as a runtime dependency in `Rakefile`
