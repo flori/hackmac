@@ -1,5 +1,11 @@
 # Changes
 
+## 2025-12-18 v2.1.0
+
+- Updated `graphina` dependency from version **0.3** to **0.4** in both
+  `Rakefile` and `hackmac.gemspec`
+- Updated `rubygems` version from **3.7.2** to **4.0.2** in `hackmac.gemspec`
+
 ## 2025-12-16 v2.0.1
 
 - Updated `value` proc in `Graphina::Graph.new` call to scale MHz values by
