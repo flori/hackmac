@@ -24,7 +24,7 @@ GemHadar do
 
   dependency  'tins',           '~>1.14'
   dependency  'term-ansicolor', '~>1.10'
-  dependency  'graphina',       '~>0.3'
+  dependency  'graphina',       '~>0.4'
   dependency  'complex_config'
   dependency  'amatch'
   dependency  'plist'
