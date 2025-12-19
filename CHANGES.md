@@ -1,5 +1,9 @@
 # Changes
 
+## 2025-12-19 v2.1.1
+
+- Updated `gem_hadar` development dependency from version **2.8** to **2.10**
+
 ## 2025-12-18 v2.1.0
 
 - Updated `graphina` dependency from version **0.3** to **0.4** in both
