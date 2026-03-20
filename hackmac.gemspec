@@ -17,12 +17,12 @@ Gem::Specification.new do |s|
   s.homepage = "http://github.com/flori/hackmac".freeze
   s.licenses = ["MIT".freeze]
   s.rdoc_options = ["--title".freeze, "Hackmac - Some useful tools for working with a Hackintosh".freeze, "--main".freeze, "README.md".freeze]
-  s.rubygems_version = "4.0.2".freeze
+  s.rubygems_version = "4.0.8".freeze
   s.summary = "Some useful tools for working with a Hackintosh".freeze
 
   s.specification_version = 4
 
-  s.add_development_dependency(%q<gem_hadar>.freeze, ["~> 2.10".freeze])
+  s.add_development_dependency(%q<gem_hadar>.freeze, [">= 2.17.0".freeze])
   s.add_development_dependency(%q<debug>.freeze, [">= 0".freeze])
   s.add_runtime_dependency(%q<tins>.freeze, ["~> 1.14".freeze])
   s.add_runtime_dependency(%q<term-ansicolor>.freeze, ["~> 1.10".freeze])
