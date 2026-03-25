@@ -1,5 +1,18 @@
 # Changes
 
+## 2026-03-25 v2.1.2
+
+- Updated `tins` dependency from `~> **1.14**` to `~> **1.52**`
+- Updated `term-ansicolor` dependency from `~> **1.10**` to `~> **1.11**`
+- Updated `graphina` dependency from `~> **0.4**` to `~> **0.5**`
+- Updated `rubygems_version` from **4.0.2** to **4.0.8**
+- Updated development dependency `gem_hadar` to `>= **2.17.0**` (previously `~>
+  **2.10**`)
+- Added `changelog` block to `Rakefile` configuration
+- Configured changelog filename to use `CHANGES.md` instead of default
+- Enables customization of changelog file location for gem publishing workflow
+- Maintains backward compatibility with existing gem publishing setup
+
 ## 2025-12-19 v2.1.1
 
 - Updated `gem_hadar` development dependency from version **2.8** to **2.10**
