@@ -4,6 +4,7 @@ efi:
 usb:
   os: '/Volumes/Install macOS Ventura/Install macOS Ventura.app'
   mp: '/Volumes/USB'
+  pull_args: '--shallow-since="2 years ago"'
 devices:
   main:
     name: 'OS_EFI'

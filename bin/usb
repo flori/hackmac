@@ -67,5 +67,5 @@ cd mountpoint_efi do
   x %{sudo chown $USER .}
   x %{git init}
   x %{git remote add origin #{$config.efi.source.inspect}}
-  x %{git pull origin --set-upstream #{($config.efi.source_branch? || 'master').inspect}}
+  x %{git pull #{$config.usb.pull_args?} origin --set-upstream #{($config.efi.source_branch? || 'master').inspect}}
 end
