@@ -24,9 +24,10 @@ GemHadar do
     'static.yml' => {}
   )
 
-  dependency  'tins',           '~> 1.52'
-  dependency  'term-ansicolor', '~> 1.11'
-  dependency  'graphina',       '~> 0.5'
+  dependency  'json-generic_object', '>= 0.2.0'
+  dependency  'tins',                '~> 1.52'
+  dependency  'term-ansicolor',      '~> 1.11'
+  dependency  'graphina',            '~> 0.5'
   dependency  'complex_config'
   dependency  'amatch'
   dependency  'plist'

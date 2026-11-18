@@ -24,6 +24,7 @@ Gem::Specification.new do |s|
 
   s.add_development_dependency(%q<gem_hadar>.freeze, [">= 2.24.1".freeze])
   s.add_development_dependency(%q<debug>.freeze, [">= 0".freeze])
+  s.add_runtime_dependency(%q<json-generic_object>.freeze, [">= 0.2.0".freeze])
   s.add_runtime_dependency(%q<tins>.freeze, ["~> 1.52".freeze])
   s.add_runtime_dependency(%q<term-ansicolor>.freeze, ["~> 1.11".freeze])
   s.add_runtime_dependency(%q<graphina>.freeze, ["~> 0.5".freeze])
