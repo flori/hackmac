@@ -1,5 +1,20 @@
 # Changes
 
+## 2026-11-18 v2.3.0
+
+### Build & CI
+
+- Added the `json-generic_object` gem (version **>= 0.2.0**) as a runtime
+  dependency in `hackmac.gemspec` and `Rakefile`.
+- Upgraded the `gem_hadar` development dependency to **2.24.1**.
+- Updated `rubygems_version` to **4.0.24** in `hackmac.gemspec`.
+- Removed vim modeline comments from `Gemfile` and `Rakefile`.
+
+### Documentation
+
+- Added a documentation comment for the `VERSION` constant in
+  `lib/hackmac/version.rb`.
+
 ## 2026-10-25 v2.2.0
 
 ### Features
