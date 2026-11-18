@@ -4,7 +4,6 @@
 # current release version as a set of constants. Do not edit it
 # by hand; it is rewritten on every `rake version` invocation.
 module Hackmac
-  # The current version of the Hackmac gem as a String.
   VERSION         = '2.2.0'
   VERSION_ARRAY   = VERSION.split('.').map(&:to_i) # :nodoc:
   VERSION_MAJOR   = VERSION_ARRAY[0] # :nodoc:
